@@ -113,7 +113,7 @@ def chunk_text(text: str, max_chunk_size: int = 8000) -> list[str]:
     
     return chunks
 
-def clean_long_transcript(text: str, model: str = "gemini-1.5-flash-latest", style: str = "presentation") -> Optional[str]:
+def clean_long_transcript(text: str, model: str = "gemini-2.0-flash-exp", style: str = "presentation") -> Optional[str]:
     """Clean very long transcripts by processing in chunks."""
     
     # Check if text needs chunking

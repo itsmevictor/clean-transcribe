@@ -19,7 +19,7 @@ from cleaner import clean_long_transcript
 @click.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @click.option('--keep-audio', is_flag=True, help='Keep downloaded audio file')
 @click.option('--clean/--no-clean', default=True, help='Clean transcript using LLM (default: clean)')
-@click.option('--llm-model', default='gemini-1.5-flash-latest', help='LLM model for cleaning')
+@click.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning')
 @click.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
               default='presentation', help='Style of cleaning to apply')
 @click.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning')
