@@ -5,7 +5,7 @@ A command-line tool that transcribes YouTube videos to text using OpenAI's Whisp
 ## Features
 
 - Download audio from YouTube videos
-- Transcribe using OpenAI Whisper (multiple model sizes available)
+- Transcribe using [OpenAI Whisper](https://github.com/openai/whisper) (multiple model sizes available)
 - **AI-powered transcript cleaning** using various LLMs (Gemini, ChatGPT, Claude)
 - Multiple output formats: TXT, SRT, VTT
 - Language detection and manual specification
@@ -15,7 +15,7 @@ A command-line tool that transcribes YouTube videos to text using OpenAI's Whisp
 
 ## Installation
 
-1. Clone or download this repository
+1. Clone or download this repository:
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
@@ -42,7 +42,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
     --model medium \
     --language en \
     --clean \
-    --llm-model gemini-1.5-flash-latest \
+    --llm-model gemini-2.0-flash-exp \
     --cleaning-style presentation \
     --save-raw \
     --keep-audio
@@ -59,7 +59,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
 
 **Cleaning Options:**
 - `--clean/--no-clean`: Enable/disable transcript cleaning (default: enabled)
-- `--llm-model`: LLM model for cleaning (default: gemini-1.5-flash-latest)
+- `--llm-model`: LLM model for cleaning (default: gemini-2.0-flash-exp)
 - `--cleaning-style`: Style of cleaning - presentation, conversation, lecture (default: presentation)
 - `--save-raw`: Also save the raw transcript before cleaning
 
@@ -99,10 +99,9 @@ llm keys set claude
 Check available models: `llm models`
 
 Popular options:
-- `gemini-1.5-flash-latest` (fast, cost-effective)
-- `gemini-1.5-pro-latest` (higher quality)
+- `gemini-2.0-flash-exp` (fast, cost-effective)
 - `gpt-4o-mini` (OpenAI, fast)
-- `gpt-4o` (OpenAI, highest quality)
+- `gpt-4o` (OpenAI, high quality)
 - `claude-3-5-sonnet-20241022` (Anthropic)
 
 ## Examples
@@ -121,7 +120,7 @@ Transcribe lecture with high-quality models:
 ```bash
 python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
     -m large \
-    --llm-model gemini-1.5-pro-latest \
+    --llm-model gemini-2.0-flash-exp \
     --cleaning-style lecture \
     --save-raw
 ```

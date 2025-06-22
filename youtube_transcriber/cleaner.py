@@ -89,7 +89,7 @@ Transcript to clean:
         click.echo(f"⚠️  Unexpected error during cleaning: {str(e)}", err=True)
         return None
 
-def chunk_text(text: str, max_chunk_size: int = 8000) -> list[str]:
+def chunk_text(text: str, max_chunk_size: int = 20000) -> list[str]:
     """Split text into chunks for processing by LLM."""
     if len(text) <= max_chunk_size:
         return [text]
