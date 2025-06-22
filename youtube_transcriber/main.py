@@ -3,10 +3,10 @@ import click
 import os
 import tempfile
 from pathlib import Path
-from downloader import download_audio
-from transcriber import transcribe_audio
-from formatter import format_output
-from cleaner import clean_long_transcript
+from .downloader import download_audio
+from .transcriber import transcribe_audio
+from .formatter import format_output
+from .cleaner import clean_long_transcript
 
 @click.command()
 @click.argument('url')
