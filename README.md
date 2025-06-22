@@ -73,7 +73,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
 
 ## LLM Setup for Transcript Cleaning
 
-The tool uses the excellent `llm` package to support multiple AI providers. Set up your preferred provider:
+The tool uses the excellent `llm` [package developed by Simon Willison](https://github.com/simonw/llm) to support multiple AI providers. Set up your preferred provider:
 
 ### Google Gemini (Recommended)
 ```bash
