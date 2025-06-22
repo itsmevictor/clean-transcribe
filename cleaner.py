@@ -17,7 +17,7 @@ def clean_transcript(text: str, model: str = "gemini-2.0-flash-exp", style: str 
 5. Keep it natural and readable
 6. Preserve important emphasis or repetition if meaningful
 
-Return only the cleaned transcript, no explanations or comments.
+Do that while keeping as close to the original text as possible. Return only the cleaned transcript, no explanations or comments.
 
 Transcript to clean:
 """,
@@ -30,7 +30,7 @@ Transcript to clean:
 5. Preserve important pauses or emphasis
 6. Keep it readable but authentic
 
-Return only the cleaned transcript, no explanations or comments.
+Do that while keeping as close to the original text as possible. Return only the cleaned transcript, no explanations or comments.
 
 Transcript to clean:
 """,
@@ -43,7 +43,7 @@ Transcript to clean:
 5. Preserve key points and emphasis
 6. Make it suitable for study notes
 
-Return only the cleaned transcript, no explanations or comments.
+Do that while keeping as close to the original text as possible. Return only the cleaned transcript, no explanations or comments.
 
 Transcript to clean:
 """
@@ -117,7 +117,7 @@ def clean_long_transcript(text: str, model: str = "gemini-2.0-flash-exp", style:
     """Clean very long transcripts by processing in chunks."""
     
     # Check if text needs chunking
-    if len(text) <= 8000:
+    if len(text) <= 20000:
         return clean_transcript(text, model, style)
     
     click.echo("📝 Processing long transcript in chunks...")
