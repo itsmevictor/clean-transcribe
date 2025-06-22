@@ -39,7 +39,7 @@ Advanced options with cleaning:
 python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
     --output transcript.txt \
     --format srt \
-    --model medium \
+    --model turbo \
     --language en \
     --clean \
     --llm-model gemini-2.0-flash-exp \
@@ -53,7 +53,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
 **Basic Options:**
 - `--output, -o`: Output file path (default: transcript.txt)
 - `--format, -f`: Output format - txt, srt, or vtt (default: txt)
-- `--model, -m`: Whisper model size - tiny, base, small, medium, large (default: base)
+- `--model, -m`: Whisper model size - tiny, base, small, medium, large, turbo (default: turbo)
 - `--language, -l`: Language code (auto-detect if not specified)
 - `--keep-audio`: Keep the downloaded audio file
 
@@ -70,6 +70,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
 - `small`: Better accuracy (~244 MB)
 - `medium`: High accuracy (~769 MB)
 - `large`: Best accuracy (~1550 MB)
+- `turbo`: Optimized for speed and accuracy (default)
 
 ## LLM Setup for Transcript Cleaning
 

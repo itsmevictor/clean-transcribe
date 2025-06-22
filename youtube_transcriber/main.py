@@ -13,8 +13,8 @@ from .cleaner import clean_long_transcript
 @click.option('--output', '-o', default='transcript.txt', help='Output file path')
 @click.option('--format', '-f', 'output_format', default='txt', 
               type=click.Choice(['txt', 'srt', 'vtt']), help='Output format (default: txt)')
-@click.option('--model', '-m', default='base', 
-              type=click.Choice(['tiny', 'base', 'small', 'medium', 'large']), 
+@click.option('--model', '-m', default='turbo', 
+              type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'turbo']), 
               help='Whisper model size')
 @click.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @click.option('--keep-audio', is_flag=True, help='Keep downloaded audio file')
