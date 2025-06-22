@@ -21,7 +21,7 @@ from .cleaner import clean_long_transcript
 @click.option('--clean/--no-clean', default=True, help='Clean transcript using LLM (default: clean)')
 @click.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp)')
 @click.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
-              default='presentation', help='Style of cleaning to apply')
+              default='presentation', help='Style of cleaning to apply (default: presentation)')
 @click.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning')
 def transcribe(url, output, output_format, model, language, keep_audio, clean, llm_model, cleaning_style, save_raw):
     """Transcribe YouTube video to text using OpenAI Whisper."""
