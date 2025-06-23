@@ -1,123 +1,58 @@
 # YouTube Transcriber
 
-A command-line tool that transcribes YouTube videos to text using OpenAI's Whisper model, with AI-powered transcript cleaning.
+A command-line tool to turn any YouTube video into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
 
 ## Features
 
-- Download audio from YouTube videos
-- Transcribe using [OpenAI Whisper](https://github.com/openai/whisper) (multiple model sizes available)
-- **AI-powered transcript cleaning** using various LLMs (Gemini, ChatGPT, Claude)
-- Multiple output formats: TXT, SRT, VTT
-- Language detection and manual specification
-- Progress indicators
-- Keep audio files option
-- Save both raw and cleaned versions
+1. **Automatic download** from YouTube
+1. **Fast and accurate transcription** using OpenAI's Whisper models
+2. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
+3. **Multiple output formats** (TXT, SRT, VTT) for any use case
+4. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+
+## Quick Start
+
+```bash
+# Basic usage - transcribe and clean
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID"
+
+# Create clean subtitles
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
+```
 
 ## Installation
 
-1. Clone or download this repository:
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Option 1: Clone and run**
+```bash
+git clone https://github.com/itsmevictor/youtube-to-text
+cd youtube-to-text
+pip install -r requirements.txt
+```
 
-## Requirements
+**Option 2: Install as package**
+```bash
+pip install -e .
+youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
+```
 
+**Requirements:**
 - Python 3.7+
-- FFmpeg (required by yt-dlp for audio processing)
-- LLM API key for transcript cleaning (optional but recommended)
+- FFmpeg (for audio processing)
+- LLM API key (for cleaning, optional but recommended)
 
-## Usage
+## Usage Examples
 
-Basic usage:
-```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID"
-```
-
-Advanced options with cleaning:
-```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" \
-    --output transcript.txt \
-    --format srt \
-    --model turbo \
-    --language en \
-    --clean \
-    --llm-model gemini-2.0-flash-exp \
-    --cleaning-style presentation \
-    --save-raw \
-    --keep-audio
-```
-
-### Options
-
-**Basic Options:**
-- `--output, -o`: Output file path (default: transcript.txt)
-- `--format, -f`: Output format - txt, srt, or vtt (default: txt)
-- `--model, -m`: Whisper model size - tiny, base, small, medium, large, turbo (default: turbo)
-- `--language, -l`: Language code (auto-detect if not specified)
-- `--keep-audio`: Keep the downloaded audio file
-
-**Cleaning Options:**
-- `--clean/--no-clean`: Enable/disable transcript cleaning (default: enabled)
-- `--llm-model`: LLM model for cleaning (default: gemini-2.0-flash-exp)
-- `--cleaning-style`: Style of cleaning - presentation, conversation, lecture (default: presentation)
-- `--save-raw`: Also save the raw transcript before cleaning
-
-### Model Sizes
-
-- `tiny`: Fastest, least accurate (~39 MB)
-- `base`: Good balance of speed and accuracy (~74 MB)
-- `small`: Better accuracy (~244 MB)
-- `medium`: High accuracy (~769 MB)
-- `large`: Best accuracy (~1550 MB)
-- `turbo`: Optimized for speed and accuracy (default)
-
-## LLM Setup for Transcript Cleaning
-
-The tool uses the excellent `llm` [package developed by Simon Willison](https://github.com/simonw/llm) to support multiple AI providers. Set up your preferred provider:
-
-### Google Gemini (Recommended)
-```bash
-llm install llm-gemini
-llm keys set gemini
-# Enter your Gemini API key when prompted
-```
-
-### OpenAI ChatGPT
-```bash
-llm keys set openai
-# Enter your OpenAI API key when prompted
-```
-
-### Anthropic Claude
-```bash
-llm install llm-claude-3
-llm keys set claude
-# Enter your Anthropic API key when prompted
-```
-
-### Available Models
-Check available models: `llm models`
-
-Popular options:
-- `gemini-2.0-flash-exp` (fast, cost-effective)
-- `gpt-4o-mini` (OpenAI, fast)
-- `gpt-4o` (OpenAI, high quality)
-- `claude-3-5-sonnet-20241022` (Anthropic)
-
-## Examples
-
-Basic transcription with cleaning:
+**Basic transcription with cleaning:**
 ```bash
 python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
-Create cleaned SRT subtitles:
+**Create clean subtitles:**
 ```bash
 python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt -o subtitles.srt
 ```
 
-Transcribe lecture with high-quality models:
+**High-quality lecture transcription:**
 ```bash
 python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
     -m large \
@@ -126,43 +61,75 @@ python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
     --save-raw
 ```
 
-Disable cleaning for raw transcript:
+**Raw transcript (no cleaning):**
 ```bash
 python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 ```
 
+## Configuration
+
+### Key Options
+- `--format, -f`: Output format (txt, srt, vtt)
+- `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
+- `--llm-model`: LLM for cleaning (gemini-2.0-flash-exp, gpt-4o-mini, etc.)
+- `--cleaning-style`: presentation, conversation, or lecture
+- `--save-raw`: Keep both raw and cleaned versions
+- `--no-clean`: Skip AI cleaning
+
+### Whisper Models
+| Model | Speed | Accuracy | Size | Notes |
+|-------|-------|----------|------|-------|
+| tiny | Fastest | Basic | ~39 MB | Quick transcripts |
+| base | Fast | Good | ~74 MB | Balanced option |
+| turbo | Fast | Very Good | ~809 MB | **Default** |
+| large | Slow | Best | ~1550 MB | Highest quality |
+
+## LLM-Powered Cleaning Setup
+
+### Quick Setup (Recommended)
+```bash
+# Install and configure Gemini (fast + cost-effective)
+llm install llm-gemini
+llm keys set gemini
+# Enter your Gemini API key when prompted
+```
+
+### Alternative Providers
+```bash
+# OpenAI
+llm keys set openai
+
+# Anthropic Claude  
+llm install llm-claude-3
+llm keys set claude
+```
+
+**Popular models:**
+- `gemini-2.0-flash-exp` (recommended - fast, cheap)
+- `gpt-4o-mini` (OpenAI, fast)  
+- `claude-3-5-sonnet-20241022` (Anthropic, high quality)
+
+*Uses Simon Willison's excellent [llm package](https://github.com/simonw/llm) for provider flexibility.*
+
+## How LLM Cleaning Works
+
+**What it does:**
+- Removes filler words (um, uh, so, like, you know, etc.)
+- Fixes grammar and punctuation errors  
+- Organizes content into logical paragraphs
+- Maintains original meaning and context
+
+**Cleaning styles:**
+- **presentation**: Professional tone, organized paragraphs
+- **conversation**: Natural flow, minimal cleanup
+- **lecture**: Educational format, clear sections for notes
+
 ## Output Formats
 
-- **TXT**: Plain text transcription (cleaned or raw)
-- **SRT**: SubRip subtitle format with timestamps
-- **VTT**: WebVTT subtitle format for web players
+| Format | Description | Use Case |
+|--------|-------------|----------|
+| **TXT** | Plain text | Articles, notes, analysis |
+| **SRT** | SubRip subtitles | Video editing, accessibility |
+| **VTT** | WebVTT subtitles | Web players, streaming |
 
-## Cleaning Styles
-
-- **presentation**: Removes filler words, organizes into paragraphs, maintains professional tone
-- **conversation**: Preserves conversational flow while cleaning up false starts and fillers  
-- **lecture**: Optimized for educational content, creates clear sections suitable for study notes
-
-## What Cleaning Does
-
-The AI cleaning process:
-1. Removes filler words (um, uh, so, like, you know, etc.)
-2. Fixes grammar and punctuation errors
-3. Organizes content into logical paragraphs
-4. Maintains original meaning and tone
-5. Preserves important emphasis and context
-6. Makes the text more readable and professional
-
-Note: For SRT/VTT formats, timing information is preserved but text is cleaned.
-
-## Installation as Package
-
-To install as a system command:
-```bash
-pip install -e .
-```
-
-Then use:
-```bash
-youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
-```
+*Note: SRT/VTT preserve timing while cleaning text content.*
