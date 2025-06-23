@@ -27,12 +27,15 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.sr
 git clone https://github.com/itsmevictor/youtube-to-text
 cd youtube-to-text
 pip install -r requirements.txt
+python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
 **Option 2: Install as package**
 ```bash
+git clone https://github.com/itsmevictor/youtube-to-text
+cd youtube-to-text
 pip install -e .
-youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
+youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   
 ```
 
 **Requirements:**
