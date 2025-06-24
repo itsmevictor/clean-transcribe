@@ -84,7 +84,7 @@ python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 |-------|-------|----------|------|-------|
 | tiny | Fastest | Basic | ~39 MB | Quick transcripts |
 | base | Fast | Good | ~74 MB | Balanced option |
-| turbo | Fast | Very Good | ~809 MB | **Default** |
+| small | Moderate | Good | ~244 MB | Good for most use cases |
 | large | Slow | Best | ~1550 MB | Highest quality |
 
 ## LLM-Powered Cleaning Setup
