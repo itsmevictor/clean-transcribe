@@ -1,23 +1,26 @@
 # YouTube Transcriber
 
-A command-line tool to turn any YouTube video into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
+A command-line tool to turn any YouTube video or local audio file into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
 
 ## Features
 
-1. **Automatic download** from YouTube
-1. **Fast and accurate transcription** using OpenAI's Whisper models
-2. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-3. **Multiple output formats** (TXT, SRT, VTT) for any use case
-4. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio file (`.mp3`, `.wav`, `.m4a`).
+2. **Fast and accurate transcription** using OpenAI's Whisper models
+3. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
+4. **Multiple output formats** (TXT, SRT, VTT) for any use case
+5. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
 
 ## Quick Start
 
 ```bash
-# Basic usage - transcribe and clean
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID"
+# Transcribe a YouTube video
+youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
 
-# Create clean subtitles
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
+# Transcribe a local audio file
+youtube-transcribe "/path/to/your/audio.mp3"
+
+# Create clean subtitles from a video
+youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
 ```
 
 ## Installation
@@ -27,7 +30,7 @@ python main.py "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.sr
 git clone https://github.com/itsmevictor/youtube-to-text
 cd youtube-to-text
 pip install -r requirements.txt
-python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+youtube-transcribe "path/to/your/audio.mp3"
 ```
 
 **Option 2: Install as package**
@@ -45,19 +48,24 @@ youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 ## Usage Examples
 
-**Basic transcription with cleaning:**
+**Transcribe a YouTube video:**
 ```bash
-python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
-**Create clean subtitles:**
+**Transcribe a local audio file:**
 ```bash
-python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt -o subtitles.srt
+youtube-transcribe "path/to/your/audio.mp3" -o "transcript.txt"
 ```
 
-**High-quality lecture transcription:**
+**Create clean subtitles from a video:**
 ```bash
-python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
+youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
+```
+
+**High-quality lecture transcription from a local file:**
+```bash
+youtube-transcribe "lecture.wav" \
     -m large \
     --llm-model gemini-2.0-flash-exp \
     --cleaning-style lecture \
@@ -66,7 +74,7 @@ python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
 
 **Raw transcript (no cleaning):**
 ```bash
-python main.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
+youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 ```
 
 ## Configuration

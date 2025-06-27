@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 def download_audio(url, output_dir):
-    """Download audio from YouTube URL using yt-dlp."""
+    """Download audio from YouTube URL using yt-dlp and return its path and title."""
     output_template = os.path.join(output_dir, '%(title)s.%(ext)s')
     
     ydl_opts = {
@@ -41,6 +41,6 @@ def download_audio(url, output_dir):
                 actual_path = os.path.join(output_dir, file)
                 if actual_path != audio_path:
                     os.rename(actual_path, audio_path)
-                return audio_path
+                return audio_path, title
         
         raise FileNotFoundError("Downloaded audio file not found")
