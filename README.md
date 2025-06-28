@@ -1,10 +1,10 @@
 # YouTube Transcriber
 
-A command-line tool to turn any YouTube video or local audio file into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
+A command-line tool to turn any YouTube video, local audio or video file into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
 
 ## Features
 
-1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio file (`.mp3`, `.wav`, `.m4a`).
+1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio/video file (`.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
 2. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
 3. **Fast and accurate transcription** using OpenAI's Whisper models
 4. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
@@ -17,8 +17,8 @@ A command-line tool to turn any YouTube video or local audio file into a clean, 
 # Transcribe a YouTube video
 youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
 
-# Transcribe a local audio file
-youtube-transcribe "/path/to/your/audio.mp3"
+# Transcribe a local video file
+youtube-transcribe "/path/to/your/video.mp4"
 
 # Transcribe a specific segment of a video
 youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" --start "1:30" --end "2:30"

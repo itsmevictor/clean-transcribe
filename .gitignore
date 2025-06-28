@@ -4,3 +4,6 @@ youtube_transcriber.egg-info/*
 todo.md
 dist/* 
 tests/__pycache__/*
+*.mp3 
+*.mp4
+.claude/*

@@ -4,6 +4,7 @@ import os
 import tempfile
 from pathlib import Path
 from .downloader import download_audio
+from .extractor import extract_audio
 from .transcriber import transcribe_audio
 from .formatter import format_output
 from .cleaner import clean_long_transcript
@@ -28,20 +29,25 @@ from .trimmer import trim_audio
 @click.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
 def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end):
     """
-    Transcribe a YouTube video or a local audio file to text.
+    Transcribe a YouTube video, local audio or video file to text.
 
-    INPUT is the URL of a YouTube video or the path to a local audio file.
+    INPUT is the URL of a YouTube video or the path to a local audio/video file.
     Supported local audio formats are: MP3, WAV, M4A.
+    Supported local video formats are: MP4, MKV, MOV.
     """
     try:
         is_local_file = os.path.exists(input_path)
         
         with tempfile.TemporaryDirectory() as temp_dir:
             if is_local_file:
-                click.echo(f"🎧 Processing local audio file: {input_path}")
-                if not input_path.lower().endswith(('.mp3', '.wav', '.m4a')):
-                    raise ValueError("Only MP3, WAV, or M4A files are supported for local input.")
-                audio_path = input_path
+                if input_path.lower().endswith(('.mp3', '.wav', '.m4a')):
+                    click.echo(f"🎧 Processing local audio file: {input_path}")
+                    audio_path = input_path
+                elif input_path.lower().endswith(('.mp4', '.mkv', '.mov')):
+                    click.echo(f"🎬 Processing local video file: {input_path}")
+                    audio_path = extract_audio(input_path, temp_dir)
+                else:
+                    raise ValueError("Unsupported file type. Please provide a YouTube URL or a local audio/video file.")
                 video_title = None
             else:
                 click.echo(f"🎥 Downloading audio from: {input_path}")
