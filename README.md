@@ -1,4 +1,4 @@
-# YouTube Transcriber
+# Clean Transcriber
 
 A command-line tool to turn any YouTube video, local audio or video file into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
 
@@ -15,34 +15,34 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 
 ```bash
 # Transcribe a YouTube video
-youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
+clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
 
 # Transcribe a local video file
-youtube-transcribe "/path/to/your/video.mp4"
+clean-transcribe "/path/to/your/video.mp4"
 
 # Transcribe a specific segment of a video
-youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" --start "1:30" --end "2:30"
+clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" --start "1:30" --end "2:30"
 
 # Create clean subtitles from a video
-youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
+clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
 ```
 
 ## Installation
 
 **Option 1: Clone and run**
 ```bash
-git clone https://github.com/itsmevictor/youtube-to-text
-cd youtube-to-text
+git clone https://github.com/itsmevictor/clean-transcribe
+cd clean-transcribe
 pip install -r requirements.txt
-youtube-transcribe "path/to/your/audio.mp3"
+clean-transcribe "path/to/your/audio.mp3"
 ```
 
 **Option 2: Install as package**
 ```bash
-git clone https://github.com/itsmevictor/youtube-to-text
-cd youtube-to-text
+git clone https://github.com/itsmevictor/clean-transcribe
+cd clean-transcribe
 pip install -e .
-youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   
+clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   
 ```
 
 **Requirements:**
@@ -54,27 +54,27 @@ youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 **Transcribe a YouTube video:**
 ```bash
-youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ```
 
 **Transcribe a local audio file:**
 ```bash
-youtube-transcribe "path/to/your/audio.mp3" -o "transcript.txt"
+clean-transcribe "path/to/your/audio.mp3" -o "transcript.txt"
 ```
 
 **Transcribe a specific segment:**
 ```bash
-youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --start "00:01:30" --end "00:02:30"
+clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --start "00:01:30" --end "00:02:30"
 ```
 
 **Create clean subtitles from a video:**
 ```bash
-youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
+clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
 ```
 
 **High-quality lecture transcription from a local file:**
 ```bash
-youtube-transcribe "lecture.wav" \
+clean-transcribe "lecture.wav" \
     -m large \
     --llm-model gemini-2.0-flash-exp \
     --cleaning-style lecture \
@@ -83,7 +83,7 @@ youtube-transcribe "lecture.wav" \
 
 **Raw transcript (no cleaning):**
 ```bash
-youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
+clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 ```
 
 ## Configuration

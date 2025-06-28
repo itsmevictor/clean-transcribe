@@ -16,19 +16,19 @@ except FileNotFoundError:
     ]
 
 setup(
-    name="youtube-transcriber",
+    name="clean-transcribe",
     version="1.0.0",
-    description="Transform YouTube videos into clean, readable transcripts using AI-powered processing",
+    description="A simple CLI to transcribe Youtube videos or local audio/video files and produce easy-to-use transcripts for analysis, reading, or subtitles.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Victor Kreitmann",
     author_email="victor.kreitmann@gmail.com",  
-    url="https://github.com/itsmevictor/youtube-to-text",
+    url="https://github.com/itsmevictor/clean-transcribe",
     packages=find_packages(),
     install_requires=requirements,
     entry_points={
         'console_scripts': [
-            'youtube-transcribe=youtube_transcriber.main:transcribe',
+            'clean-transcribe=clean_transcriber.main:transcribe',
         ],
     },
     python_requires=">=3.7",
