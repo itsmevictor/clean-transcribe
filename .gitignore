@@ -1,6 +1,6 @@
 clean_transcriber/__pycache__/**
 __pycache__/*
-clean_transcriber.egg-info/*
+clean_transcribe.egg-info/*
 todo.md
 dist/* 
 tests/__pycache__/*
