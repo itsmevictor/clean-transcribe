@@ -7,6 +7,7 @@ from .downloader import download_audio
 from .transcriber import transcribe_audio
 from .formatter import format_output
 from .cleaner import clean_long_transcript
+from .trimmer import trim_audio
 
 @click.command()
 @click.argument('input_path', metavar='<URL or local path>')
@@ -23,7 +24,9 @@ from .cleaner import clean_long_transcript
 @click.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
               default='presentation', help='Style of cleaning to apply (default: presentation)')
 @click.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning')
-def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw):
+@click.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
+@click.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
+def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end):
     """
     Transcribe a YouTube video or a local audio file to text.
 
@@ -42,7 +45,13 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                 video_title = None
             else:
                 click.echo(f"🎥 Downloading audio from: {input_path}")
-                audio_path, video_title = download_audio(input_path, temp_dir)
+                audio_path, video_title = download_audio(input_path, temp_dir, start, end)
+
+            if is_local_file and (start or end):
+                click.echo(f"✂️  Trimming audio from {start or 'start'} to {end or 'end'}...")
+                trimmed_audio_path = os.path.join(temp_dir, "trimmed_audio.mp3")
+                trim_audio(audio_path, trimmed_audio_path, start, end)
+                audio_path = trimmed_audio_path
 
             if output is None:
                 if is_local_file:
