@@ -5,10 +5,11 @@ A command-line tool to turn any YouTube video or local audio file into a clean, 
 ## Features
 
 1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio file (`.mp3`, `.wav`, `.m4a`).
-2. **Fast and accurate transcription** using OpenAI's Whisper models
-3. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-4. **Multiple output formats** (TXT, SRT, VTT) for any use case
-5. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+2. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
+3. **Fast and accurate transcription** using OpenAI's Whisper models
+4. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
+5. **Multiple output formats** (TXT, SRT, VTT) for any use case
+6. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
 
 ## Quick Start
 
@@ -18,6 +19,9 @@ youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
 
 # Transcribe a local audio file
 youtube-transcribe "/path/to/your/audio.mp3"
+
+# Transcribe a specific segment of a video
+youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" --start "1:30" --end "2:30"
 
 # Create clean subtitles from a video
 youtube-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.srt
@@ -58,6 +62,11 @@ youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 youtube-transcribe "path/to/your/audio.mp3" -o "transcript.txt"
 ```
 
+**Transcribe a specific segment:**
+```bash
+youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --start "00:01:30" --end "00:02:30"
+```
+
 **Create clean subtitles from a video:**
 ```bash
 youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
@@ -82,6 +91,8 @@ youtube-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 ### Key Options
 - `--format, -f`: Output format (txt, srt, vtt)
 - `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
+- `--start`: Start time for transcription (e.g., "1:30")
+- `--end`: End time for transcription (e.g., "2:30")
 - `--llm-model`: LLM for cleaning (gemini-2.0-flash-exp, gpt-4o-mini, etc.)
 - `--cleaning-style`: presentation, conversation, or lecture
 - `--save-raw`: Keep both raw and cleaned versions
