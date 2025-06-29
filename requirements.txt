@@ -6,4 +6,3 @@ ffmpeg-python>=0.2.0
 tqdm>=4.66.1
 llm>=0.13.0
 llm-gemini>=0.1.0
-pydub

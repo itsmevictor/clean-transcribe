@@ -2,7 +2,7 @@ import whisper
 import warnings
 import click
 
-def transcribe_audio(audio_path, model_name='base', language=None):
+def transcribe_audio(audio_path, model_name='base', language=None, transcription_prompt=None):
     """Transcribe audio using OpenAI Whisper."""
     # Suppress FP16 warnings
     warnings.filterwarnings("ignore", message="FP16 is not supported on CPU")
@@ -20,6 +20,9 @@ def transcribe_audio(audio_path, model_name='base', language=None):
     
     if language:
         options['language'] = language
+    
+    if transcription_prompt:
+        options['prompt'] = transcription_prompt
     
     # Perform transcription
     result = model.transcribe(audio_path, **options)

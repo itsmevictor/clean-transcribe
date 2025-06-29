@@ -27,7 +27,8 @@ from .trimmer import trim_audio
 @click.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning')
 @click.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
 @click.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
-def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end):
+@click.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
+def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt):
     """
     Transcribe a YouTube video, local audio or video file to text.
 
@@ -67,7 +68,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                 output = f"{base_name}.{output_format}"
 
             click.echo(f"🎙️  Transcribing with {model} model...")
-            result = transcribe_audio(audio_path, model, language)
+            result = transcribe_audio(audio_path, model, language, transcription_prompt)
             
             process_transcription(result, output, output_format, clean_transcript, llm_model, cleaning_style, save_raw, audio_path, is_local_file, keep_audio)
 
