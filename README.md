@@ -92,19 +92,20 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 - `--format, -f`: Output format (txt, srt, vtt)
 - `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
 - `--start`: Start time for transcription (e.g., "1:30")
+- `--transcription-prompt`: Custom prompt for Whisper to guide transcription
 - `--end`: End time for transcription (e.g., "2:30")
 - `--llm-model`: LLM for cleaning (gemini-2.0-flash-exp, gpt-4o-mini, etc.)
 - `--cleaning-style`: presentation, conversation, or lecture
 - `--save-raw`: Keep both raw and cleaned versions
 - `--no-clean`: Skip AI cleaning
 
-### Whisper Models
+<!-- ### Whisper Models
 | Model | Speed | Accuracy | Size | Notes |
 |-------|-------|----------|------|-------|
 | tiny | Fastest | Basic | ~39 MB | Quick transcripts |
 | base | Fast | Good | ~74 MB | Balanced option |
 | small | Moderate | Good | ~244 MB | Good for most use cases |
-| large | Slow | Best | ~1550 MB | Highest quality |
+| large | Slow | Best | ~1550 MB | Highest quality | -->
 
 ## LLM-Powered Cleaning Setup
 
@@ -155,3 +156,7 @@ llm keys set claude
 | **VTT** | WebVTT subtitles | Web players, streaming |
 
 *Note: SRT/VTT preserve timing while cleaning text content.*
+
+## Feedback
+
+I'd love to hear your feedback! If you encounter any issues, have suggestions for new features, or just want to share your experience, please don't hesitate to [open an issue](https://github.com/vkreitmann/clean-transcribe/issues).
