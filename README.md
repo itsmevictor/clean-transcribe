@@ -159,4 +159,4 @@ llm keys set claude
 
 ## Feedback
 
-I'd love to hear your feedback! If you encounter any issues, have suggestions for new features, or just want to share your experience, please don't hesitate to [open an issue](https://github.com/vkreitmann/clean-transcribe/issues).
+I'd love to hear your feedback! If you encounter any issues, have suggestions for new features, or just want to share your experience, please don't hesitate to [open an issue](https://github.com/itsmevictor/clean-transcribe/issues).
