@@ -3,6 +3,7 @@ import click
 import os
 import tempfile
 from pathlib import Path
+from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, MutuallyExclusiveOptionGroup
 from .downloader import download_audio
 from .extractor import extract_audio
 from .transcriber import transcribe_audio
@@ -12,23 +13,37 @@ from .trimmer import trim_audio
 
 @click.command()
 @click.argument('input_path', metavar='<URL or local path>')
-@click.option('--output', '-o', default=None, help='Output file path. Default for YouTube videos is a shortened, snake-cased version of the video title. Default for local files is the input filename with a new extension.')
-@click.option('--format', '-f', 'output_format', default='txt', 
+
+# Output Options
+@optgroup.group('Output Options')
+@optgroup.option('--output', '-o', default=None, help='Output file path. Default for YouTube videos is a shortened, snake-cased version of the video title. Default for local files is the input filename with a new extension.')
+@optgroup.option('--format', '-f', 'output_format', default='txt', 
               type=click.Choice(['txt', 'srt', 'vtt']), help='Output format (default: txt)')
-@click.option('--model', '-m', default='small', 
+@optgroup.option('--keep-audio', is_flag=True, help='Keep audio file (if downloaded)')
+@optgroup.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning.')
+
+# Transcription Options
+@optgroup.group('Transcription Options', help='')
+@optgroup.option('--model', '-m', default='small', 
               type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'turbo']), 
               help='Whisper model size')
-@click.option('--language', '-l', help='Language code (auto-detect if not specified)')
-@click.option('--keep-audio', is_flag=True, help='Keep audio file (if downloaded)')
-@click.option('--clean/--no-clean', 'clean_transcript', default=True, help='Clean transcript using LLM (default: clean)')
-@click.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp)')
-@click.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
+@optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
+@optgroup.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
+@optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
+@optgroup.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
+
+# LLM Cleaning Options
+@optgroup.group('LLM Cleaning Options')
+@optgroup.option('--clean/--no-clean', 'clean_transcript', default=True, help='Clean transcript using LLM (default: clean)')
+@optgroup.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp)')
+@optgroup.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
               default='presentation', help='Style of cleaning to apply (default: presentation)')
-@click.option('--save-raw', is_flag=True, help='Also save raw transcript before cleaning')
-@click.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
-@click.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
-@click.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
-def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt):
+
+# Download/Authentication Options
+@optgroup.group('Download/Authentication Options')
+@optgroup.option('--cookies', help='Netscape formatted file to read cookies from and dump cookie jar in. See https://github.com/yt-dlp/yt-dlp/wiki/Extractors for details.')
+@optgroup.option('--cookies-from-browser', help='The name of the browser to load cookies from. Currently supported browsers are: brave, chrome, chromium, edge, firefox, opera, safari, vivaldi, whale. Optionally, the KEYRING used for decrypting Chromium cookies on Linux, the name/path of the PROFILE to load cookies from, and the CONTAINER name (if Firefox) can be given with their respective separators. See https://github.com/yt-dlp/yt-dlp/wiki/Extractors for details.')
+def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt, cookies, cookies_from_browser):
     """
     Transcribe a YouTube video, local audio or video file to text.
 
@@ -52,7 +67,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                 video_title = None
             else:
                 click.echo(f"🎥 Downloading audio from: {input_path}")
-                audio_path, video_title = download_audio(input_path, temp_dir, start, end)
+                audio_path, video_title = download_audio(input_path, temp_dir, start, end, cookies, cookies_from_browser)
 
             if is_local_file and (start or end):
                 click.echo(f"✂️  Trimming audio from {start or 'start'} to {end or 'end'}...")

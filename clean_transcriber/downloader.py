@@ -1,7 +1,7 @@
 import yt_dlp
 import os
 
-def download_audio(url, output_dir, start_time=None, end_time=None):
+def download_audio(url, output_dir, start_time=None, end_time=None, cookies=None, cookies_from_browser=None):
     """Download audio from a YouTube URL."""
     
     postprocessor_args = []
@@ -24,13 +24,32 @@ def download_audio(url, output_dir, start_time=None, end_time=None):
         'no_warnings': True,
         'noprogress': True,
     }
+    
+    # Add cookie configuration if provided
+    if cookies:
+        ydl_opts['cookiefile'] = cookies
+    elif cookies_from_browser:
+        ydl_opts['cookiesfrombrowser'] = (cookies_from_browser,)
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=True)
-        video_title = info_dict.get('title', None)
-        
-        # Construct the expected output filename
-        base_name = ydl.prepare_filename(info_dict).rsplit('.', 1)[0]
-        output_filename = f"{base_name}.mp3"
-        
-        return output_filename, video_title
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=True)
+            video_title = info_dict.get('title', None)
+            
+            # Construct the expected output filename
+            base_name = ydl.prepare_filename(info_dict).rsplit('.', 1)[0]
+            output_filename = f"{base_name}.mp3"
+            
+            return output_filename, video_title
+    except yt_dlp.DownloadError as e:
+        error_msg = str(e).lower()
+        if any(phrase in error_msg for phrase in ['sign in', 'not a bot', 'private', 'age-restricted', 'members-only']):
+            raise Exception(f"Authentication required: {e}\n\n"
+                          f"This video may be private, age-restricted, or members-only content.\n"
+                          f"Try using cookie authentication:\n"
+                          f"  --cookies-from-browser chrome  (or firefox, safari, etc.)\n"
+                          f"  --cookies /path/to/cookies.txt\n\n"
+                          f"For more details, see: https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies\n"
+                          f"Warning: Using cookies may risk temporary or permanent account suspension.")
+        else:
+            raise e
