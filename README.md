@@ -6,7 +6,9 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 
 1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio/video file (`.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
 2. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
-3. **Fast and accurate transcription** using OpenAI's Whisper models
+3. **Dual transcription options**: 
+   - **Local Whisper models** (free, private, offline)
+   - **OpenAI API** (higher quality, faster on weak hardware, supports GPT-4o models)
 4. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
 5. **Multiple output formats** (TXT, SRT, VTT) for any use case
 6. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
@@ -14,8 +16,11 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 ## Quick Start
 
 ```bash
-# Transcribe a YouTube video
+# Transcribe a YouTube video (local Whisper)
 clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
+
+# Transcribe using OpenAI API (higher quality)
+clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" --api-provider openai
 
 # Transcribe a local video file
 clean-transcribe "/path/to/your/video.mp4"
@@ -49,6 +54,7 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 - Python 3.7+
 - FFmpeg (for audio processing)
 - LLM API key (for cleaning, optional but recommended)
+- OpenAI API key (for OpenAI transcription, optional)
 
 ## Usage Examples
 
@@ -86,11 +92,29 @@ clean-transcribe "lecture.wav" \
 clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 ```
 
+**OpenAI API transcription:**
+```bash
+# High-quality transcription with GPT-4o
+clean-transcribe "lecture.wav" \
+    --api-provider openai \
+    --model gpt-4o-transcribe \
+    --api-key YOUR_API_KEY
+
+# Fast and cost-effective with mini model
+clean-transcribe "meeting.mp4" \
+    --api-provider openai \
+    --model gpt-4o-mini-transcribe
+```
+
 ## Configuration
 
 ### Key Options
+- `--api-provider`: Choose transcription provider (`local` or `openai`)
 - `--format, -f`: Output format (txt, srt, vtt)
-- `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
+- `--model, -m`: Transcription model
+  - Local: tiny, base, small, medium, large, turbo
+  - OpenAI: whisper-1, gpt-4o-transcribe, gpt-4o-mini-transcribe
+- `--api-key`: OpenAI API key (or set OPENAI_API_KEY env var)
 - `--start`: Start time for transcription (e.g., "1:30")
 - `--transcription-prompt`: Custom prompt for Whisper to guide transcription
 - `--end`: End time for transcription (e.g., "2:30")
@@ -133,6 +157,37 @@ llm keys set claude
 - `claude-3-5-sonnet-20241022` (Anthropic, high quality)
 
 *Uses Simon Willison's excellent [llm package](https://github.com/simonw/llm) for provider flexibility.*
+
+## OpenAI API Setup (Optional)
+
+For higher quality transcription using OpenAI's latest models:
+
+### Quick Setup
+```bash
+# Get your API key from https://platform.openai.com/api-keys
+export OPENAI_API_KEY="your-api-key-here"
+
+# Or pass it directly
+clean-transcribe audio.mp3 --api-provider openai --api-key your-api-key-here
+```
+
+### Model Comparison
+| Model | Quality | Speed | Cost | Best For |
+|-------|---------|-------|------|----------|
+| `gpt-4o-mini-transcribe` | High | Fast | Low | Most use cases (default) |
+| `gpt-4o-transcribe` | Highest | Moderate | Higher | Professional/critical content |
+| `whisper-1` | Good | Fast | Low | Basic transcription with timestamps |
+
+### Benefits of OpenAI API
+- **Higher quality**: GPT-4o models often produce more accurate transcripts
+- **Faster processing**: No local GPU required, good for weaker hardware
+- **Large file support**: Automatically handles files >25MB via chunking
+- **Advanced prompting**: Better context understanding for specialized vocabulary
+
+### Limitations
+- Requires internet connection and API key
+- Usage costs (see [OpenAI pricing](https://openai.com/pricing))
+- 25MB per-chunk limit (handled automatically)
 
 ## How LLM Cleaning Works
 

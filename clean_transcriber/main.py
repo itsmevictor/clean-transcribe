@@ -6,6 +6,7 @@ from pathlib import Path
 from .downloader import download_audio
 from .extractor import extract_audio
 from .transcriber import transcribe_audio
+from .api_transcriber import transcribe_audio_api, OPENAI_MODELS
 from .formatter import format_output
 from .cleaner import clean_long_transcript
 from .trimmer import trim_audio
@@ -15,9 +16,13 @@ from .trimmer import trim_audio
 @click.option('--output', '-o', default=None, help='Output file path. Default for YouTube videos is a shortened, snake-cased version of the video title. Default for local files is the input filename with a new extension.')
 @click.option('--format', '-f', 'output_format', default='txt', 
               type=click.Choice(['txt', 'srt', 'vtt']), help='Output format (default: txt)')
-@click.option('--model', '-m', default='small', 
-              type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'turbo']), 
-              help='Whisper model size')
+@click.option('--api-provider', default='local', 
+              type=click.Choice(['local', 'openai']),
+              help='Transcription provider: local Whisper or OpenAI API (default: local)')
+@click.option('--model', '-m', default=None, 
+              help='Model to use. For local: tiny, base, small, medium, large, turbo. For OpenAI: whisper-1, gpt-4o-transcribe, gpt-4o-mini-transcribe')
+@click.option('--api-key', envvar='OPENAI_API_KEY',
+              help='OpenAI API key (can also be set via OPENAI_API_KEY environment variable)')
 @click.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @click.option('--keep-audio', is_flag=True, help='Keep audio file (if downloaded)')
 @click.option('--clean/--no-clean', 'clean_transcript', default=True, help='Clean transcript using LLM (default: clean)')
@@ -28,7 +33,7 @@ from .trimmer import trim_audio
 @click.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
 @click.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
 @click.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
-def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt):
+def transcribe(input_path, output, output_format, api_provider, model, api_key, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt):
     """
     Transcribe a YouTube video, local audio or video file to text.
 
@@ -37,6 +42,30 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
     Supported local video formats are: MP4, MKV, MOV.
     """
     try:
+        # Set default models if not specified
+        local_models = ['tiny', 'base', 'small', 'medium', 'large', 'turbo']
+        
+        if model is None:
+            if api_provider == 'local':
+                model = 'small'  # Default local model
+            else:  # openai
+                model = 'gpt-4o-mini-transcribe'  # Default OpenAI model (faster and cheaper)
+        
+        # Validate model based on API provider
+        if api_provider == 'local':
+            if model not in local_models:
+                click.echo(f"❌ Error: Model '{model}' not available for local provider. Available models: {', '.join(local_models)}", err=True)
+                raise click.Abort()
+        elif api_provider == 'openai':
+            if model not in OPENAI_MODELS:
+                click.echo(f"❌ Error: Model '{model}' not available for OpenAI API. Available models: {', '.join(OPENAI_MODELS)}", err=True)
+                raise click.Abort()
+            
+            # Validate API key for OpenAI
+            if not api_key and not os.getenv('OPENAI_API_KEY'):
+                click.echo("❌ Error: OpenAI API key is required when using --api-provider openai. Set OPENAI_API_KEY environment variable or use --api-key parameter.", err=True)
+                raise click.Abort()
+        
         is_local_file = os.path.exists(input_path)
         
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -67,8 +96,22 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                     base_name = get_safe_filename(video_title)
                 output = f"{base_name}.{output_format}"
 
-            click.echo(f"🎙️  Transcribing with {model} model...")
-            result = transcribe_audio(audio_path, model, language, transcription_prompt)
+            if api_provider == 'local':
+                click.echo(f"🎙️  Transcribing with local {model} model...")
+                result = transcribe_audio(audio_path, model, language, transcription_prompt)
+            else:  # openai
+                click.echo(f"🎙️  Transcribing with OpenAI {model} model...")
+                try:
+                    result = transcribe_audio_api(audio_path, model, language, transcription_prompt, api_key)
+                except Exception as api_error:
+                    click.echo(f"❌ OpenAI API error: {str(api_error)}", err=True)
+                    
+                    # Offer fallback to local transcription
+                    if click.confirm("Would you like to fallback to local Whisper transcription?"):
+                        click.echo(f"🔄 Falling back to local small model...")
+                        result = transcribe_audio(audio_path, 'small', language, transcription_prompt)
+                    else:
+                        raise click.Abort()
             
             process_transcription(result, output, output_format, clean_transcript, llm_model, cleaning_style, save_raw, audio_path, is_local_file, keep_audio)
 
