@@ -4,12 +4,13 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 
 ## Features
 
-1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio/video file (`.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
-2. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
-3. **Fast and accurate transcription** using OpenAI's Whisper models
-4. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-5. **Multiple output formats** (TXT, SRT, VTT) for any use case
-6. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+1. **Multiple input formats**: Supports various audio and video formats for flexible usage (e.g., YouTube URL, `.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
+2. **Diverse output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
+3. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
+4. **Fast and accurate transcription** using OpenAI's Whisper models
+5. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
+6. **Multiple output formats** (TXT, SRT, VTT) for any use case
+7. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
 
 ## Quick Start
 
@@ -45,11 +46,6 @@ pip install -e .
 clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   
 ```
 
-**Requirements:**
-- Python 3.7+
-- FFmpeg (for audio processing)
-- LLM API key (for cleaning, optional but recommended)
-
 ## Usage Examples
 
 **Transcribe a YouTube video:**
@@ -81,33 +77,20 @@ clean-transcribe "lecture.wav" \
     --save-raw
 ```
 
-**Raw transcript (no cleaning):**
-```bash
-clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
-```
-
 ## Configuration
 
 ### Key Options
 - `--format, -f`: Output format (txt, srt, vtt)
 - `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
 - `--start`: Start time for transcription (e.g., "1:30")
-- `--transcription-prompt`: Custom prompt for Whisper to guide transcription
 - `--end`: End time for transcription (e.g., "2:30")
+- `--transcription-prompt`: Custom prompt for Whisper to guide transcription
 - `--llm-model`: LLM for cleaning (gemini-2.0-flash-exp, gpt-4o-mini, etc.)
 - `--cleaning-style`: presentation, conversation, or lecture
 - `--save-raw`: Keep both raw and cleaned versions
 - `--no-clean`: Skip AI cleaning
 
-<!-- ### Whisper Models
-| Model | Speed | Accuracy | Size | Notes |
-|-------|-------|----------|------|-------|
-| tiny | Fastest | Basic | ~39 MB | Quick transcripts |
-| base | Fast | Good | ~74 MB | Balanced option |
-| small | Moderate | Good | ~244 MB | Good for most use cases |
-| large | Slow | Best | ~1550 MB | Highest quality | -->
-
-## LLM-Powered Cleaning Setup
+## LLM-Powered Cleaning
 
 ### Quick Setup (Recommended)
 ```bash
@@ -115,10 +98,8 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 llm install llm-gemini
 llm keys set gemini
 # Enter your Gemini API key when prompted
-```
+# Or use any other LLM provider
 
-### Alternative Providers
-```bash
 # OpenAI
 llm keys set openai
 
@@ -127,14 +108,9 @@ llm install llm-claude-3
 llm keys set claude
 ```
 
-**Popular models:**
-- `gemini-2.0-flash-exp` (recommended - fast, cheap)
-- `gpt-4o-mini` (OpenAI, fast)  
-- `claude-3-5-sonnet-20241022` (Anthropic, high quality)
-
 *Uses Simon Willison's excellent [llm package](https://github.com/simonw/llm) for provider flexibility.*
 
-## How LLM Cleaning Works
+### Cleaning Process
 
 **What it does:**
 - Removes filler words (um, uh, so, like, you know, etc.)
@@ -146,14 +122,6 @@ llm keys set claude
 - **presentation**: Professional tone, organized paragraphs
 - **conversation**: Natural flow, minimal cleanup
 - **lecture**: Educational format, clear sections for notes
-
-## Output Formats
-
-| Format | Description | Use Case |
-|--------|-------------|----------|
-| **TXT** | Plain text | Articles, notes, analysis |
-| **SRT** | SubRip subtitles | Video editing, accessibility |
-| **VTT** | WebVTT subtitles | Web players, streaming |
 
 *Note: SRT/VTT preserve timing while cleaning text content.*
 
