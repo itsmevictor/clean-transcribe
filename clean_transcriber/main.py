@@ -25,12 +25,20 @@ from .trimmer import trim_audio
 # Transcription Options
 @optgroup.group('Transcription Options', help='')
 @optgroup.option('--model', '-m', default='small', 
-              type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'turbo']), 
-              help='Whisper model size (default: small)')
+              type=click.Choice([
+                  # Whisper models
+                  'tiny', 'base', 'small', 'medium', 'large', 'turbo',
+                  # Voxtral API models
+                  'voxtral-mini-latest', 'voxtral-small-latest',
+                  # Voxtral Local models
+                  'voxtral-mini-local', 'voxtral-small-local'
+              ]), 
+              help='Transcription model: Whisper (tiny-turbo), Voxtral API (*-latest), or Voxtral Local (*-local)')
 @optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
-@optgroup.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
+@optgroup.option('--transcription-prompt', help='A prompt to guide transcription (mainly for Whisper models)')
 @optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
 @optgroup.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
+@optgroup.option('--auto-download', is_flag=True, help='Automatically download local models without confirmation (use with caution for large models)')
 
 # LLM Cleaning Options
 @optgroup.group('LLM Cleaning Options')
@@ -43,13 +51,18 @@ from .trimmer import trim_audio
 @optgroup.group('Download/Authentication Options')
 @optgroup.option('--cookies', help='Netscape formatted file to read cookies from and dump cookie jar in. See https://github.com/yt-dlp/yt-dlp/wiki/Extractors for details.')
 @optgroup.option('--cookies-from-browser', help='The name of the browser to load cookies from. Currently supported browsers are: brave, chrome, chromium, edge, firefox, opera, safari, vivaldi, whale. Optionally, the KEYRING used for decrypting Chromium cookies on Linux, the name/path of the PROFILE to load cookies from, and the CONTAINER name (if Firefox) can be given with their respective separators. See https://github.com/yt-dlp/yt-dlp/wiki/Extractors for details.')
-def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt, cookies, cookies_from_browser):
+def transcribe(input_path, output, output_format, model, language, keep_audio, clean_transcript, llm_model, cleaning_style, save_raw, start, end, transcription_prompt, auto_download, cookies, cookies_from_browser):
     """
     Transcribe a YouTube video, local audio or video file to text.
 
     INPUT is the URL of a YouTube video or the path to a local audio/video file.
     Supported local audio formats are: MP3, WAV, M4A, OPUS.
     Supported local video formats are: MP4, MKV, MOV.
+    
+    Models:
+    • Whisper: tiny, base, small, medium, large, turbo (local, built-in)
+    • Voxtral API: voxtral-mini-latest, voxtral-small-latest (requires MISTRAL_API_KEY)
+    • Voxtral Local: voxtral-mini-local (~6GB), voxtral-small-local (~48GB) (requires transformers)
     """
     try:
         is_local_file = os.path.exists(input_path)
@@ -83,7 +96,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                 output = f"{base_name}.{output_format}"
 
             click.echo(f"🎙️  Transcribing with {model} model...")
-            result = transcribe_audio(audio_path, model, language, transcription_prompt)
+            result = transcribe_audio(audio_path, model, language, transcription_prompt, auto_download)
             
             process_transcription(result, output, output_format, clean_transcript, llm_model, cleaning_style, save_raw, audio_path, is_local_file, keep_audio)
 

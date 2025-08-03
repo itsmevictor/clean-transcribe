@@ -1,3 +1,4 @@
+# Core dependencies
 yt-dlp>=2023.12.30
 openai-whisper>=20231117
 click>=8.1.7
@@ -7,3 +8,14 @@ ffmpeg-python>=0.2.0
 tqdm>=4.66.1
 llm>=0.13.0
 llm-gemini>=0.1.0
+
+# Voxtral API support
+requests>=2.25.0
+
+# Voxtral Local support (optional, install manually for local models)
+# torch>=2.0.0
+# transformers>=4.54.0
+# accelerate>=0.20.0
+# safetensors>=0.3.0
+mistral-common>=1.8.1
+# packaging  # for version checking
