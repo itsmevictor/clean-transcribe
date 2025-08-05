@@ -98,6 +98,7 @@ clean-transcribe "lecture.wav" \
 llm install llm-gemini
 llm keys set gemini
 # Enter your Gemini API key when prompted
+
 # Or use any other LLM provider
 
 # OpenAI
