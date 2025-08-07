@@ -5,11 +5,10 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 ## Features
 
 1. **Multiple input formats**: Supports various audio and video formats for flexible usage (e.g., YouTube URL, `.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
-2. **Diverse output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
+2. **Multiple output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
 3. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
 4. **Fast and accurate transcription** using OpenAI's Whisper models
 5. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-6. **Multiple output formats** (TXT, SRT, VTT) for any use case
 7. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
 
 ## Quick Start
