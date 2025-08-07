@@ -13,7 +13,7 @@ def transcribe_audio_voxtral_api(audio_path: str, model_name: str = 'voxtral-min
     
     # Map model names to API model identifiers
     model_mapping = {
-        'voxtral-mini-latest': 'voxtral-mini-2507',
+        'voxtral-mini-latest': 'voxtral-mini-latest',
         'voxtral-small-latest': 'voxtral-small-latest'
     }
     
@@ -21,7 +21,7 @@ def transcribe_audio_voxtral_api(audio_path: str, model_name: str = 'voxtral-min
     
     url = 'https://api.mistral.ai/v1/audio/transcriptions'
     headers = {
-        'x-api-key': api_key
+        'Authorization': f'Bearer {api_key}'
     }
     
     # Prepare form data
@@ -33,7 +33,7 @@ def transcribe_audio_voxtral_api(audio_path: str, model_name: str = 'voxtral-min
         data['language'] = language
     
     # Add timestamp granularities to get segment information
-    data['timestamp_granularities'] = 'segment'
+    data['timestamp_granularities[]'] = 'segment'
     
     # Open the audio file
     try:
