@@ -70,7 +70,7 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
 **High-quality lecture transcription from a local file:**
 ```bash
 clean-transcribe "lecture.wav" \
-    -m large \
+    -m whisper-large \
     --llm-model gemini-2.0-flash-exp \
     --cleaning-style lecture \
     --save-raw
@@ -80,7 +80,7 @@ clean-transcribe "lecture.wav" \
 
 ### Key Options
 - `--format, -f`: Output format (txt, srt, vtt)
-- `--model, -m`: Whisper model (tiny, base, small, medium, large, turbo)
+- `--model, -m`: Transcription model (whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo, voxtral-mini-api, voxtral-small-api, voxtral-mini-local, voxtral-small-local)
 - `--start`: Start time for transcription (e.g., "1:30")
 - `--end`: End time for transcription (e.g., "2:30")
 - `--transcription-prompt`: Custom prompt for Whisper to guide transcription
@@ -89,7 +89,7 @@ clean-transcribe "lecture.wav" \
 - `--save-raw`: Keep both raw and cleaned versions
 - `--no-clean`: Skip AI cleaning
 
-## LLM-Powered Cleaning
+## LLM-Powered Cleaning Setup
 
 ### Quick Setup (Recommended)
 ```bash

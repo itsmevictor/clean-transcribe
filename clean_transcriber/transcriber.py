@@ -3,24 +3,47 @@ import warnings
 import click
 from typing import Optional, Dict, Any
 
-def transcribe_audio(audio_path: str, model_name: str = 'base', language: Optional[str] = None, 
+
+def _map_model_name(model_name: str) -> str:
+    """Map user-facing model names to internal API names."""
+    model_mapping = {
+        # Whisper models: remove whisper- prefix
+        'whisper-tiny': 'tiny',
+        'whisper-base': 'base', 
+        'whisper-small': 'small',
+        'whisper-medium': 'medium',
+        'whisper-large': 'large',
+        'whisper-turbo': 'turbo',
+        # Voxtral API models: replace -api with -latest
+        'voxtral-mini-api': 'voxtral-mini-latest',
+        'voxtral-small-api': 'voxtral-small-latest',
+        # Voxtral Local models: keep as-is
+        'voxtral-mini-local': 'voxtral-mini-local',
+        'voxtral-small-local': 'voxtral-small-local'
+    }
+    return model_mapping.get(model_name, model_name)
+
+def transcribe_audio(audio_path: str, model_name: str = 'whisper-base', language: Optional[str] = None, 
                     transcription_prompt: Optional[str] = None, auto_download: bool = False) -> Dict[str, Any]:
     """
     Transcribe audio using the appropriate provider based on model name.
     
     Supports:
-    - Whisper models: tiny, base, small, medium, large, turbo
-    - Voxtral API models: voxtral-mini-latest, voxtral-small-latest  
+    - Whisper models: whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo
+    - Voxtral API models: voxtral-mini-api, voxtral-small-api
     - Voxtral Local models: voxtral-mini-local, voxtral-small-local
     """
     
+    # Map new model names to internal names
+    internal_model_name = _map_model_name(model_name)
+    
     # Route to appropriate provider based on model name
-    if is_voxtral_api_model(model_name):
-        return transcribe_audio_voxtral_api(audio_path, model_name, language, transcription_prompt)
-    elif is_voxtral_local_model(model_name):
-        return transcribe_audio_voxtral_local(audio_path, model_name, language, transcription_prompt, auto_download)
+    if is_voxtral_api_model(internal_model_name):
+        return transcribe_audio_voxtral_api(audio_path, internal_model_name, language, transcription_prompt)
+    elif is_voxtral_local_model(internal_model_name):
+        return transcribe_audio_voxtral_local(audio_path, internal_model_name, language, transcription_prompt, auto_download)
     else:
-        return transcribe_audio_whisper(audio_path, model_name, language, transcription_prompt)
+        return transcribe_audio_whisper(audio_path, internal_model_name, language, transcription_prompt)
 
 
 def transcribe_audio_whisper(audio_path: str, model_name: str = 'base', language: Optional[str] = None, 
@@ -93,7 +116,7 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str, language: O
 def get_available_models() -> Dict[str, list]:
     """Get all available models grouped by provider."""
     models = {
-        'whisper': ['tiny', 'base', 'small', 'medium', 'large', 'turbo'],
+        'whisper': ['whisper-tiny', 'whisper-base', 'whisper-small', 'whisper-medium', 'whisper-large', 'whisper-turbo'],
         'voxtral_api': [],
         'voxtral_local': []
     }
@@ -102,7 +125,7 @@ def get_available_models() -> Dict[str, list]:
     try:
         from .voxtral_api import check_voxtral_api_setup
         if check_voxtral_api_setup():
-            models['voxtral_api'] = ['voxtral-mini-latest', 'voxtral-small-latest']
+            models['voxtral_api'] = ['voxtral-mini-api', 'voxtral-small-api']
     except ImportError:
         pass
     

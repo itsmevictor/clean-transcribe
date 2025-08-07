@@ -24,16 +24,16 @@ from .trimmer import trim_audio
 
 # Transcription Options
 @optgroup.group('Transcription Options', help='')
-@optgroup.option('--model', '-m', default='small', 
+@optgroup.option('--model', '-m', default='whisper-small', 
               type=click.Choice([
                   # Whisper models
-                  'tiny', 'base', 'small', 'medium', 'large', 'turbo',
+                  'whisper-tiny', 'whisper-base', 'whisper-small', 'whisper-medium', 'whisper-large', 'whisper-turbo',
                   # Voxtral API models
-                  'voxtral-mini-latest', 'voxtral-small-latest',
+                  'voxtral-mini-api', 'voxtral-small-api',
                   # Voxtral Local models
                   'voxtral-mini-local', 'voxtral-small-local'
               ]), 
-              help='Transcription model: Whisper (tiny-turbo), Voxtral API (*-latest), or Voxtral Local (*-local)')
+              help='Transcription model: Whisper (whisper-*), Voxtral API (*-api), or Voxtral Local (*-local)')
 @optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @optgroup.option('--transcription-prompt', help='A prompt to guide transcription (mainly for Whisper models)')
 @optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
@@ -59,10 +59,13 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
     Supported local audio formats are: MP3, WAV, M4A, OPUS.
     Supported local video formats are: MP4, MKV, MOV.
     
-    Models:
-    • Whisper: tiny, base, small, medium, large, turbo (local, built-in)
-    • Voxtral API: voxtral-mini-latest, voxtral-small-latest (requires MISTRAL_API_KEY)
-    • Voxtral Local: voxtral-mini-local (~6GB), voxtral-small-local (~48GB) (requires transformers)
+    * Available models: *
+
+      • Whisper (local): whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo 
+
+      • Voxtral API: voxtral-mini-api, voxtral-small-api (requires MISTRAL_API_KEY)
+
+      • Voxtral Local: voxtral-mini-local, voxtral-small-local (requires transformers) 
     """
     try:
         is_local_file = os.path.exists(input_path)
