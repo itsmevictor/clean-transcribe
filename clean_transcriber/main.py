@@ -48,7 +48,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
     Transcribe a YouTube video, local audio or video file to text.
 
     INPUT is the URL of a YouTube video or the path to a local audio/video file.
-    Supported local audio formats are: MP3, WAV, M4A.
+    Supported local audio formats are: MP3, WAV, M4A, OPUS.
     Supported local video formats are: MP4, MKV, MOV.
     """
     try:
@@ -56,7 +56,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
         
         with tempfile.TemporaryDirectory() as temp_dir:
             if is_local_file:
-                if input_path.lower().endswith(('.mp3', '.wav', '.m4a')):
+                if input_path.lower().endswith(('.mp3', '.wav', '.m4a', '.opus')):
                     click.echo(f"🎧 Processing local audio file: {input_path}")
                     audio_path = input_path
                 elif input_path.lower().endswith(('.mp4', '.mkv', '.mov')):
