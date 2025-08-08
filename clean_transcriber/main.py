@@ -26,7 +26,7 @@ from .trimmer import trim_audio
 @optgroup.group('Transcription Options', help='')
 @optgroup.option('--model', '-m', default='small', 
               type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'turbo']), 
-              help='Whisper model size')
+              help='Whisper model size (default: small)')
 @optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @optgroup.option('--transcription-prompt', help='A prompt to be passed to Whisper to guide the transcription')
 @optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
@@ -35,7 +35,7 @@ from .trimmer import trim_audio
 # LLM Cleaning Options
 @optgroup.group('LLM Cleaning Options')
 @optgroup.option('--clean/--no-clean', 'clean_transcript', default=True, help='Clean transcript using LLM (default: clean)')
-@optgroup.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp)')
+@optgroup.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp). Run `llm models` for a list of supported models, and see https://github.com/simonw/llm for details.')
 @optgroup.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
               default='presentation', help='Style of cleaning to apply (default: presentation)')
 
