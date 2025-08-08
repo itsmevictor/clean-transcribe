@@ -59,12 +59,10 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
     Supported local audio formats are: MP3, WAV, M4A, OPUS.
     Supported local video formats are: MP4, MKV, MOV.
     
-    * Available models: *
-
+    \b
+    Available models:
       • Whisper (local): whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo 
-
       • Voxtral API: voxtral-mini-api, voxtral-small-api (requires MISTRAL_API_KEY)
-
       • Voxtral Local: voxtral-mini-local, voxtral-small-local (requires transformers) 
     """
     try:
