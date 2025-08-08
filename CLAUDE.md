@@ -23,7 +23,7 @@ llm keys set gemini
 export MISTRAL_API_KEY="your_mistral_api_key"
 
 # Set up Voxtral Local (optional, for local models)
-pip install torch transformers>=4.54.0 accelerate safetensors mistral-common>=1.8.1 packaging
+pip install torch transformers>=4.54.0 accelerate safetensors "mistral-common[audio]>=1.8.1" packaging timm librosa
 ```
 
 ## Core Commands
@@ -40,8 +40,8 @@ clean-transcribe --help
 clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --start "0:10" --end "0:30" --no-clean
 
 # Test Voxtral models
-clean-transcribe "/path/to/audio.mp3" --model voxtral-mini-latest  # API
-clean-transcribe "/path/to/audio.mp3" --model voxtral-mini-local   # Local
+clean-transcribe "/path/to/audio.mp3" --model voxtral-mini-api   # API
+clean-transcribe "/path/to/audio.mp3" --model voxtral-mini-local # Local
 ```
 
 ## Architecture
@@ -90,12 +90,12 @@ The codebase follows a modular pipeline architecture with separate modules for e
 ## Transcription Providers
 
 ### Whisper (Built-in)
-- Models: `tiny`, `base`, `small`, `medium`, `large`, `turbo`
+- Models: `whisper-tiny`, `whisper-base`, `whisper-small`, `whisper-medium`, `whisper-large`, `whisper-turbo`
 - Local inference, no API key required
 - Supports language detection and prompts
 
 ### Voxtral API
-- Models: `voxtral-mini-latest`, `voxtral-small-latest`
+- Models: `voxtral-mini-api`, `voxtral-small-api`
 - Requires `MISTRAL_API_KEY` environment variable
 - 15-minute max audio length per request
 - Automatic base64 encoding for API upload

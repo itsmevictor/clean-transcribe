@@ -28,7 +28,28 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
     try:
         import mistral_common
     except ImportError:
-        missing_deps.append("mistral-common>=1.8.1")
+        missing_deps.append("mistral-common[audio]>=1.8.1")
+    
+    # Check additional dependencies that Voxtral models might need
+    try:
+        import timm
+    except ImportError:
+        missing_deps.append("timm")
+    
+    try:
+        import accelerate
+    except ImportError:
+        missing_deps.append("accelerate")
+    
+    try:
+        import safetensors
+    except ImportError:
+        missing_deps.append("safetensors")
+    
+    try:
+        import librosa
+    except ImportError:
+        missing_deps.append("librosa")
     
     if missing_deps:
         deps_str = " ".join(missing_deps)
@@ -41,7 +62,7 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
         )
     
     # Now import after dependency check
-    from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+    from transformers import VoxtralForConditionalGeneration, AutoProcessor
     
     # Map model names to HuggingFace model IDs
     model_mapping = {
@@ -54,18 +75,18 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
     
     hf_model_id = model_mapping[model_name]
     
-    # Warn about large model sizes
-    if 'small' in model_name.lower():
-        model_size_gb = 48  # Approximate size for 24B model
-        if not auto_download:
-            click.echo(f"⚠️  Warning: {model_name} is approximately {model_size_gb}GB")
-            click.echo("This will require significant disk space and memory.")
-            if not click.confirm("Do you want to continue?"):
-                raise click.Abort()
+    # Warn about model sizes and ask for confirmation
+    model_size_gb = 48 if 'small' in model_name.lower() else 6  # 48GB for small, 6GB for mini
+    
+    if not auto_download:
+        click.echo(f"⚠️  Warning: {model_name} is approximately {model_size_gb}GB")
+        click.echo("This will require significant disk space and memory.")
+        if not click.confirm("Do you want to continue?"):
+            raise click.Abort()
     
     # Determine device
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+    torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
     
     click.echo(f"🔧 Using device: {device}")
     
@@ -90,28 +111,35 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
             click.echo(f"Loading model {hf_model_id} ({model_size_gb if 'small' in model_name.lower() else 6}GB)...")
             # Load model
             try:
-                model = AutoModelForSpeechSeq2Seq.from_pretrained(
+                model = VoxtralForConditionalGeneration.from_pretrained(
                     hf_model_id,
                     torch_dtype=torch_dtype,
                     device_map="auto" if device == "cuda" else None,
-                    use_safetensors=True
                 )
                 bar.update(1)
             except Exception as e:
-                if "mistral-common" in str(e).lower():
-                    raise Exception("Missing mistral-common library. Install with: pip install mistral-common>=1.8.1")
+                error_str = str(e).lower()
+                if "mistral-common" in error_str:
+                    raise Exception("Missing mistral-common library. Install with: pip install 'mistral-common[audio]>=1.8.1'")
+                elif "timm" in error_str or "imagenetinfo" in error_str:
+                    raise Exception(
+                        "Voxtral model dependency issue with 'timm' library.\n"
+                        "Try updating timm: pip install --upgrade timm\n"
+                        "If that doesn't work, try: pip install timm==0.9.12"
+                    )
+                elif "configuration" in error_str and "voxtral" in error_str:
+                    raise Exception(
+                        "Voxtral model configuration issue. This might be due to:\n"
+                        "1. Incompatible transformers version\n"
+                        "2. Missing model files\n" 
+                        "Try: pip install --upgrade transformers>=4.54.0"
+                    )
                 else:
                     raise e
             
-            # Create pipeline
-            pipe = pipeline(
-                "automatic-speech-recognition",
-                model=model,
-                tokenizer=processor.tokenizer,
-                feature_extractor=processor.feature_extractor,
-                torch_dtype=torch_dtype,
-                device_map="auto" if device == "cuda" else None,
-            )
+            # Move model to device if using CPU
+            if device == "cpu":
+                model = model.to(device)
             bar.update(1)
     
     except Exception as e:
@@ -119,7 +147,6 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
         raise e
     
     # Prepare transcription options
-    generate_kwargs = {}
     if language:
         # Note: Voxtral models may not support language specification the same way as Whisper
         click.echo(f"⚠️  Language specification ({language}) may not be supported by Voxtral models")
@@ -128,22 +155,74 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
         # Note: Voxtral models may not support prompts the same way as Whisper
         click.echo(f"⚠️  Transcription prompts may not be supported by Voxtral models")
     
-    # Transcribe audio
+    # Transcribe audio using Voxtral
     try:
         with click.progressbar(length=1, label='Transcribing with Voxtral') as bar:
-            result = pipe(audio_path, generate_kwargs=generate_kwargs, return_timestamps=True)
+            # Use the correct transcription request format from the README
+            inputs = processor.apply_transcription_request(
+                language=language or "en",
+                audio=audio_path,
+                model_id=hf_model_id
+            )
+            
+            # Move inputs to device and set dtype
+            if device == "cuda":
+                inputs = inputs.to(device, dtype=torch_dtype)
+            else:
+                inputs = inputs.to(device)
+            
+            # Generate transcription
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=500,
+                    temperature=0.0
+                )
+            
+            # Decode the transcription (only the new tokens)
+            decoded_outputs = processor.batch_decode(
+                outputs[:, inputs.input_ids.shape[1]:], 
+                skip_special_tokens=True
+            )
+            transcription = decoded_outputs[0]
             bar.update(1)
+            
     except Exception as e:
         raise Exception(f"Transcription failed: {e}")
     
     # Convert to Whisper-compatible format
-    whisper_format = _convert_to_whisper_format(result)
+    whisper_format = _convert_voxtral_to_whisper_format(transcription)
     
     return whisper_format
 
 
+def _convert_voxtral_to_whisper_format(transcription: str) -> Dict[str, Any]:
+    """Convert Voxtral transcription text to Whisper-compatible format."""
+    
+    # For now, create a single segment with the entire transcription
+    # TODO: Could potentially split into segments based on punctuation/sentences
+    segments = [{
+        'id': 0,
+        'seek': 0,
+        'start': 0.0,
+        'end': 0.0,  # We don't have timing information from basic Voxtral usage
+        'text': transcription,
+        'tokens': [],
+        'temperature': 0.0,
+        'avg_logprob': 0.0,
+        'compression_ratio': 1.0,
+        'no_speech_prob': 0.0
+    }]
+    
+    return {
+        'text': transcription,
+        'segments': segments,
+        'language': 'unknown'  # Voxtral may not provide language detection
+    }
+
+
 def _convert_to_whisper_format(voxtral_result: Dict[str, Any]) -> Dict[str, Any]:
-    """Convert Voxtral pipeline result to Whisper-compatible format."""
+    """Convert Voxtral pipeline result to Whisper-compatible format (legacy function)."""
     
     # Extract main text
     text = voxtral_result.get('text', '')
