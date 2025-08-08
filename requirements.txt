@@ -19,3 +19,5 @@ requests>=2.25.0
 # safetensors>=0.3.0
 mistral-common>=1.8.1
 # packaging  # for version checking
+timm  # for Voxtral model dependencies
+librosa  # for audio processing in Voxtral models
