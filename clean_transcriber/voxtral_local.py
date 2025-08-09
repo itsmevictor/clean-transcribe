@@ -177,9 +177,9 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
         click.echo(f"⚠️  Language specification ({language}) may not be supported by Voxtral models")
     
     if transcription_prompt:
-        # Note: Voxtral models may not support prompts the same way as Whisper
-        click.echo(f"⚠️  Transcription prompts may not be supported by Voxtral models")
-    
+        # Note: Voxtral models do not support prompts the same way as Whisper
+        click.echo(f"⚠️  Transcription prompts are not supported by Voxtral models")
+
     # Transcribe audio using Voxtral
     try:
         with click.progressbar(length=1, label='Transcribing with Voxtral') as bar:

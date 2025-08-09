@@ -4,12 +4,11 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 
 ## Features
 
-1. **YouTube & Local File Support**: Transcribe from a YouTube URL or a local audio/video file (`.mp3`, `.wav`, `.m4a`, `.mp4`, `.mkv`, `.mov`).
-2. **Segment Selection**: Transcribe only a specific segment of the audio using `--start` and `--end` times.
-3. **Fast and accurate transcription** using OpenAI's Whisper models
+1. **Multiple input formats**: Supports various audio and video formats for flexible usage (e.g., YouTube URL, `.mp3`, `.wav`, `.m4a`, `.opus`, `.mp4`, `.mkv`, `.mov`).
+2. **Multiple output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
+3. **Flexible transcription models**: Choose from various local (Whisper, Voxtral) and API-based (OpenAI, Mistral) models for different use cases.
 4. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-5. **Multiple output formats** (TXT, SRT, VTT) for any use case
-6. **Flexible LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+5. **Wide LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
 
 ## Quick Start
 
@@ -98,14 +97,6 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --no-clean
 - `--cleaning-style`: presentation, conversation, or lecture
 - `--save-raw`: Keep both raw and cleaned versions
 - `--no-clean`: Skip AI cleaning
-
-<!-- ### Whisper Models
-| Model | Speed | Accuracy | Size | Notes |
-|-------|-------|----------|------|-------|
-| whisper-tiny | Fastest | Basic | ~39 MB | Quick transcripts |
-| whisper-base | Fast | Good | ~74 MB | Balanced option |
-| whisper-small | Moderate | Good | ~244 MB | Good for most use cases |
-| whisper-large | Slow | Best | ~1550 MB | Highest quality | -->
 
 ## LLM-Powered Cleaning Setup
 
