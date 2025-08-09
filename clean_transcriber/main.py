@@ -35,7 +35,7 @@ from .trimmer import trim_audio
               ]), 
               help='Transcription model: Whisper (whisper-*), Voxtral API (*-api), or Voxtral Local (*-local)')
 @optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
-@optgroup.option('--transcription-prompt', help='A prompt to guide transcription (mainly for Whisper models)')
+@optgroup.option('--transcription-prompt', help='A prompt to guide transcription (only works for OpenAI models)')
 @optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
 @optgroup.option('--end', help='End time of the segment to transcribe (e.g., "00:02:30" or "2:30")')
 @optgroup.option('--auto-download', is_flag=True, help='Automatically download local models without confirmation (use with caution for large models)')
