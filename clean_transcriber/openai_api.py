@@ -146,7 +146,8 @@ def _transcribe_chunked_file(client, audio_path: str, api_model_id: str, languag
                 chunk_path = os.path.join(temp_dir, f"chunk_{i}.mp3")
                 
                 # Export chunk to file
-                chunk.export(chunk_path, format="mp3")
+                with open(chunk_path, 'wb') as f:
+                    chunk.export(f, format="mp3")
                 
                 # For context continuity, include previous chunk's ending in the prompt
                 chunk_prompt = transcription_prompt

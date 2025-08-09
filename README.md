@@ -1,14 +1,14 @@
 # Clean Transcriber
 
-A command-line tool to turn any YouTube video, local audio or video file into a clean, readable text transcript. It uses OpenAI's Whisper for transcription and the LLM of your choice to automatically clean and reformat the output.
+A command-line tool to turn any YouTube video, local audio or video file into a clean, readable text transcript. It uses the transcription model of your choice (local or API-based) for transcription and your preferred LLM to automatically clean and reformat the output.
 
 ## Features
 
 1. **Multiple input formats**: Supports various audio and video formats for flexible usage (e.g., YouTube URL, `.mp3`, `.wav`, `.m4a`, `.opus`, `.mp4`, `.mkv`, `.mov`).
 2. **Multiple output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
 3. **Flexible transcription models**: Choose from various local (Whisper, Voxtral) and API-based (OpenAI, Mistral) models for different use cases.
-5. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs
-6. **Wide LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning
+5. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs.
+6. **Wide LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning.
 
 ## Quick Start
 
