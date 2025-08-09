@@ -38,7 +38,9 @@ def transcribe_audio(audio_path: str, model_name: str = 'whisper-base', language
     internal_model_name = _map_model_name(model_name)
     
     # Route to appropriate provider based on model name
-    if is_voxtral_api_model(internal_model_name):
+    if is_openai_api_model(model_name):
+        return transcribe_audio_openai_api(audio_path, model_name, language, transcription_prompt)
+    elif is_voxtral_api_model(internal_model_name):
         return transcribe_audio_voxtral_api(audio_path, internal_model_name, language, transcription_prompt)
     elif is_voxtral_local_model(internal_model_name):
         return transcribe_audio_voxtral_local(audio_path, internal_model_name, language, transcription_prompt, auto_download)
@@ -75,6 +77,15 @@ def transcribe_audio_whisper(audio_path: str, model_name: str = 'base', language
     return result
 
 
+def is_openai_api_model(model_name: str) -> bool:
+    """Check if model should use OpenAI API."""
+    try:
+        from .openai_api import is_openai_api_model
+        return is_openai_api_model(model_name)
+    except ImportError:
+        return False
+
+
 def is_voxtral_api_model(model_name: str) -> bool:
     """Check if model should use Voxtral API."""
     try:
@@ -91,6 +102,16 @@ def is_voxtral_local_model(model_name: str) -> bool:
         return is_voxtral_local_model(model_name)
     except ImportError:
         return False
+
+
+def transcribe_audio_openai_api(audio_path: str, model_name: str, language: Optional[str], 
+                               transcription_prompt: Optional[str]) -> Dict[str, Any]:
+    """Route to OpenAI API transcription."""
+    try:
+        from .openai_api import transcribe_audio_openai_api
+        return transcribe_audio_openai_api(audio_path, model_name, language, transcription_prompt)
+    except ImportError as e:
+        raise ImportError(f"OpenAI API support not available: {e}")
 
 
 def transcribe_audio_voxtral_api(audio_path: str, model_name: str, language: Optional[str], 

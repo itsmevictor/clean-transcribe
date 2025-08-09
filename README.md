@@ -79,7 +79,7 @@ clean-transcribe "lecture.wav" \
 
 ### Key Options
 - `--format, -f`: Output format (txt, srt, vtt)
-- `--model, -m`: Transcription model (whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo, voxtral-mini-api, voxtral-small-api, voxtral-mini-local, voxtral-small-local)
+- `--model, -m`: Transcription model (whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo, whisper-1-api, gpt-4o-transcribe-api, gpt-4o-mini-transcribe-api, voxtral-mini-api, voxtral-small-api, voxtral-mini-local, voxtral-small-local)
 - `--start`: Start time for transcription (e.g., "1:30")
 - `--end`: End time for transcription (e.g., "2:30")
 - `--transcription-prompt`: Custom prompt for Whisper to guide transcription

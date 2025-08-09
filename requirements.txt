@@ -9,6 +9,9 @@ tqdm>=4.66.1
 llm>=0.13.0
 llm-gemini>=0.1.0
 
+# OpenAI API support
+openai>=1.0.0
+
 # Voxtral API support
 requests>=2.25.0
 

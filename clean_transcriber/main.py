@@ -26,14 +26,16 @@ from .trimmer import trim_audio
 @optgroup.group('Transcription Options', help='')
 @optgroup.option('--model', '-m', default='whisper-small', 
               type=click.Choice([
-                  # Whisper models
+                  # Whisper models (local)
                   'whisper-tiny', 'whisper-base', 'whisper-small', 'whisper-medium', 'whisper-large', 'whisper-turbo',
+                  # OpenAI API models
+                  'whisper-1-api', 'gpt-4o-transcribe-api', 'gpt-4o-mini-transcribe-api',
                   # Voxtral API models
                   'voxtral-mini-api', 'voxtral-small-api',
                   # Voxtral Local models
                   'voxtral-mini-local', 'voxtral-small-local'
               ]), 
-              help='Transcription model: Whisper (whisper-*), Voxtral API (*-api), or Voxtral Local (*-local)')
+              help='Transcription model: Whisper (whisper-*), OpenAI API (*-api), Voxtral API (voxtral-*-api), or Voxtral Local (*-local)')
 @optgroup.option('--language', '-l', help='Language code (auto-detect if not specified)')
 @optgroup.option('--transcription-prompt', help='A prompt to guide transcription (only works for OpenAI models)')
 @optgroup.option('--start', help='Start time of the segment to transcribe (e.g., "00:01:30" or "1:30")')
@@ -62,6 +64,7 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
     \b
     Available models:
       • Whisper (local): whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo 
+      • OpenAI API: whisper-1-api, gpt-4o-transcribe-api, gpt-4o-mini-transcribe-api (requires OPENAI_API_KEY)
       • Voxtral API: voxtral-mini-api, voxtral-small-api (requires MISTRAL_API_KEY)
       • Voxtral Local: voxtral-mini-local, voxtral-small-local (requires transformers) 
     """
