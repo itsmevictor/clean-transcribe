@@ -75,14 +75,39 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
     
     hf_model_id = model_mapping[model_name]
     
-    # Warn about model sizes and ask for confirmation
+    # Check if model is already cached locally
+    from transformers.utils import is_offline_mode
+    
     model_size_gb = 48 if 'small' in model_name.lower() else 6  # 48GB for small, 6GB for mini
     
-    if not auto_download:
+    # Check if model exists in cache by checking HuggingFace cache directory
+    model_is_cached = False
+    try:
+        from huggingface_hub import try_to_load_from_cache
+        from pathlib import Path
+        import os
+        
+        # Check if key model files exist in cache
+        cache_dir = Path.home() / '.cache' / 'huggingface' / 'hub'
+        model_cache_dir = cache_dir / f"models--{hf_model_id.replace('/', '--')}"
+        
+        if model_cache_dir.exists():
+            # Look for model files that indicate successful download
+            for file_pattern in ['*.safetensors', '*.bin', 'config.json']:
+                if any(model_cache_dir.rglob(file_pattern)):
+                    model_is_cached = True
+                    break
+    except Exception as e:
+        # Fall back to False if any error occurs
+        model_is_cached = False
+    
+    if not auto_download and not model_is_cached:
         click.echo(f"⚠️  Warning: {model_name} is approximately {model_size_gb}GB")
         click.echo("This will require significant disk space and memory.")
         if not click.confirm("Do you want to continue?"):
             raise click.Abort()
+    elif model_is_cached:
+        click.echo(f"✅ Using cached {model_name} model ({model_size_gb}GB)")
     
     # Determine device
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -114,7 +139,7 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
                 model = VoxtralForConditionalGeneration.from_pretrained(
                     hf_model_id,
                     torch_dtype=torch_dtype,
-                    device_map="auto" if device == "cuda" else None,
+                    device_map=device if device == "cuda" else None,
                 )
                 bar.update(1)
             except Exception as e:
@@ -171,12 +196,11 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
             else:
                 inputs = inputs.to(device)
             
-            # Generate transcription
+            # Generate transcription (following HuggingFace docs exactly)
             with torch.no_grad():
                 outputs = model.generate(
                     **inputs,
-                    max_new_tokens=500,
-                    temperature=0.0
+                    max_new_tokens=500
                 )
             
             # Decode the transcription (only the new tokens)

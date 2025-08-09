@@ -7,5 +7,4 @@ tests/__pycache__/*
 *.mp3 
 *.mp4
 .claude/*
-external_docs/*
 CLAUDE.md
