@@ -8,3 +8,4 @@ tests/__pycache__/*
 *.mp4
 .claude/*
 CLAUDE.md
+external_docs/
