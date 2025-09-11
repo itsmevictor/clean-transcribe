@@ -13,20 +13,20 @@ def transcribe_audio_openai_api(audio_path: str, model_name: str = 'whisper-1-ap
         from openai import OpenAI
     except ImportError:
         raise ImportError(
-            "❌ OpenAI API support requires missing dependencies\n\n"
-            "🔧 Quick fix:\n"
+            "> OpenAI API support requires missing dependencies\n\n"
+            "> Quick fix:\n"
             "pip install openai\n\n"
-            "⚠️  Note: You may need to restart your runtime after installation."
+            "> Note: You may need to restart your runtime after installation."
         )
     
     try:
         from pydub import AudioSegment
     except ImportError:
         raise ImportError(
-            "❌ OpenAI API support requires missing dependencies\n\n"
-            "🔧 Quick fix:\n"
+            "> OpenAI API support requires missing dependencies\n\n"
+            "> Quick fix:\n"
             "pip install pydub\n\n"
-            "⚠️  Note: You may need to restart your runtime after installation."
+            "> Note: You may need to restart your runtime after installation."
         )
     
     # Map model names to OpenAI API model IDs
@@ -45,10 +45,10 @@ def transcribe_audio_openai_api(audio_path: str, model_name: str = 'whisper-1-ap
     api_key = os.environ.get('OPENAI_API_KEY')
     if not api_key:
         raise ValueError(
-            "❌ OpenAI API key is required\n\n"
-            "🔧 Set your API key:\n"
+            "> OpenAI API key is required\n\n"
+            "> Set your API key:\n"
             "export OPENAI_API_KEY='your-api-key-here'\n\n"
-            "📖 Get your API key from: https://platform.openai.com/api-keys"
+            "> Get your API key from: https://platform.openai.com/api-keys"
         )
     
     # Initialize OpenAI client
@@ -70,16 +70,16 @@ def transcribe_audio_openai_api(audio_path: str, model_name: str = 'whisper-1-ap
         error_str = str(e).lower()
         if "invalid_api_key" in error_str or "unauthorized" in error_str:
             raise Exception(
-                "❌ Invalid OpenAI API key\n\n"
-                "🔧 Check your API key:\n"
+                "> Invalid OpenAI API key\n\n"
+                "> Check your API key:\n"
                 "1. Visit https://platform.openai.com/api-keys\n"
                 "2. Make sure your key is active and has credits\n"
                 "3. Update your OPENAI_API_KEY environment variable"
             )
         elif "quota" in error_str or "billing" in error_str:
             raise Exception(
-                "❌ OpenAI API quota exceeded or billing issue\n\n"
-                "🔧 Check your account:\n"
+                "> OpenAI API quota exceeded or billing issue\n\n"
+                "> Check your account:\n"
                 "1. Visit https://platform.openai.com/account/billing\n"
                 "2. Add credits or check your usage limits"
             )
@@ -119,7 +119,7 @@ def _transcribe_chunked_file(client, audio_path: str, api_model_id: str, languag
                            transcription_prompt: Optional[str], file_size: int) -> Dict[str, Any]:
     """Transcribe a large audio file by splitting it into chunks."""
     
-    click.echo(f"⚠️  File size ({file_size / (1024*1024):.1f}MB) exceeds API limit. Splitting into chunks...")
+    click.echo(f"> File size ({file_size / (1024*1024):.1f}MB) exceeds API limit. Splitting into chunks...")
     
     from pydub import AudioSegment
     

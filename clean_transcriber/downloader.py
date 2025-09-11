@@ -52,13 +52,13 @@ def download_audio(url, output_dir, start_time=None, end_time=None, cookies=None
         error_msg = str(e).lower()
         if any(phrase in error_msg for phrase in ['sign in', 'not a bot', 'private', 'age-restricted', 'members-only']):
             clean_message = (
-                "🔒 Authentication Required\n\n"
+                "> Authentication Required\n\n"
                 "This video requires authentication (age-restricted, private, or members-only content).\n\n"
                 "Solutions:\n"
                 "  • Use browser cookies: --cookies-from-browser chrome\n"
                 "  • Use cookie file: --cookies /path/to/cookies.txt\n\n"
-                "📖 Documentation: https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies\n"
-                "⚠️  Warning: Using cookies may risk temporary or permanent account suspension.\n\n"
+                "> Documentation: https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies\n"
+                "> Warning: Using cookies may risk temporary or permanent account suspension.\n\n"
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 "yt-dlp error:\n"
                 f"{str(e)}"

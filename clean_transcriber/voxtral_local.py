@@ -54,11 +54,11 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
     if missing_deps:
         deps_str = " ".join(missing_deps)
         raise ImportError(
-            f"❌ Local Voxtral models require missing dependencies: {', '.join(missing_deps)}\n\n"
-            "🔧 Quick fix:\n"
+            f"> Local Voxtral models require missing dependencies: {', '.join(missing_deps)}\n\n"
+            "> Quick fix:\n"
             f"pip install {deps_str}\n\n"
-            "📖 For more details, see setup_voxtral.md\n"
-            "⚠️  Note: You may need to restart your runtime after installation."
+            "> For more details, see setup_voxtral.md\n"
+            "> Note: You may need to restart your runtime after installation."
         )
     
     # Now import after dependency check
@@ -102,18 +102,18 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
         model_is_cached = False
     
     if not auto_download and not model_is_cached:
-        click.echo(f"⚠️  Warning: {model_name} is approximately {model_size_gb}GB")
+        click.echo(f"> Warning: {model_name} is approximately {model_size_gb}GB")
         click.echo("This will require significant disk space and memory.")
         if not click.confirm("Do you want to continue?"):
             raise click.Abort()
     elif model_is_cached:
-        click.echo(f"✅ Using cached {model_name} model ({model_size_gb}GB)")
+        click.echo(f"> Using cached {model_name} model ({model_size_gb}GB)")
     
     # Determine device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
     
-    click.echo(f"🔧 Using device: {device}")
+    click.echo(f"> Using device: {device}")
     
     try:
         # Load model and processor
@@ -168,17 +168,17 @@ def transcribe_audio_voxtral_local(audio_path: str, model_name: str = 'voxtral-m
             bar.update(1)
     
     except Exception as e:
-        click.echo(f"❌ Failed to load Voxtral model: {str(e)}")
+        click.echo(f"> Failed to load Voxtral model: {str(e)}")
         raise e
     
     # Prepare transcription options
     if language:
         # Note: Voxtral models may not support language specification the same way as Whisper
-        click.echo(f"⚠️  Language specification ({language}) may not be supported by Voxtral models")
+        click.echo(f"> Language specification ({language}) may not be supported by Voxtral models")
     
     if transcription_prompt:
         # Note: Voxtral models do not support prompts the same way as Whisper
-        click.echo(f"⚠️  Transcription prompts are not supported by Voxtral models")
+        click.echo(f"> Transcription prompts are not supported by Voxtral models")
 
     # Transcribe audio using Voxtral
     try:

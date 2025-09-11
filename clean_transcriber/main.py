@@ -74,20 +74,20 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
         with tempfile.TemporaryDirectory() as temp_dir:
             if is_local_file:
                 if input_path.lower().endswith(('.mp3', '.wav', '.m4a', '.opus')):
-                    click.echo(f"🎧 Processing local audio file: {input_path}")
+                    click.echo(f"> Processing local audio file: {input_path}")
                     audio_path = input_path
                 elif input_path.lower().endswith(('.mp4', '.mkv', '.mov')):
-                    click.echo(f"🎬 Processing local video file: {input_path}")
+                    click.echo(f"> Processing local video file: {input_path}")
                     audio_path = extract_audio(input_path, temp_dir)
                 else:
                     raise ValueError("Unsupported file type. Please provide a YouTube URL or a local audio/video file.")
                 video_title = None
             else:
-                click.echo(f"🎥 Downloading audio from: {input_path}")
+                click.echo(f"> Downloading audio from: {input_path}")
                 audio_path, video_title = download_audio(input_path, temp_dir, start, end, cookies, cookies_from_browser)
 
             if is_local_file and (start or end):
-                click.echo(f"✂️  Trimming audio from {start or 'start'} to {end or 'end'}...")
+                click.echo(f"> Trimming audio from {start or 'start'} to {end or 'end'}...")
                 trimmed_audio_path = os.path.join(temp_dir, "trimmed_audio.mp3")
                 trim_audio(audio_path, trimmed_audio_path, start, end)
                 audio_path = trimmed_audio_path
@@ -99,13 +99,13 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
                     base_name = get_safe_filename(video_title)
                 output = f"{base_name}.{output_format}"
 
-            click.echo(f"🎙️  Transcribing with {model} model...")
+            click.echo(f"> Transcribing with {model} model...")
             result = transcribe_audio(audio_path, model, language, transcription_prompt, auto_download)
             
             process_transcription(result, output, output_format, clean_transcript, llm_model, cleaning_style, save_raw, audio_path, is_local_file, keep_audio)
 
     except Exception as e:
-        click.echo(f"❌ Error: {str(e)}", err=True)
+        click.echo(f"> Error: {str(e)}", err=True)
         raise click.Abort()
 
 def get_safe_filename(title, max_length=50):
@@ -132,12 +132,12 @@ def process_transcription(result, output, output_format, clean_transcript, llm_m
             raw_formatted = format_output(result, output_format)
             with open(raw_output_path, 'w', encoding='utf-8') as f:
                 f.write(raw_formatted)
-            click.echo(f"📄 Raw transcript saved to: {raw_output_path}")
+            click.echo(f"> Raw transcript saved to: {raw_output_path}")
 
         # Clean transcript if requested
         final_result = result
         if clean_transcript:
-            click.echo(f"🧹 Cleaning transcript with {llm_model}...")
+            click.echo(f"> Cleaning transcript with {llm_model}...")
             raw_text = result['text']
             cleaned_text = clean_long_transcript(raw_text, llm_model, cleaning_style)
             
@@ -145,9 +145,9 @@ def process_transcription(result, output, output_format, clean_transcript, llm_m
                 final_result = result.copy()
                 final_result['text'] = cleaned_text
                 if output_format in ['srt', 'vtt'] and 'segments' in result:
-                    click.echo("ℹ️  Note: Cleaned text with original timing segments")
+                    click.echo("> Note: Cleaned text with original timing segments")
             else:
-                click.echo("⚠️  Cleaning failed, using original transcript")
+                click.echo("> Cleaning failed, using original transcript")
         
         # Format and save final output
         final_output_path = output_path
@@ -170,12 +170,12 @@ def process_transcription(result, output, output_format, clean_transcript, llm_m
             else:
                 if os.path.exists(audio_path):
                     os.rename(audio_path, final_audio_path)
-            click.echo(f"📁 Audio saved to: {final_audio_path}")
+            click.echo(f"> Audio saved to: {final_audio_path}")
         
-        click.echo(f"✅ Transcription saved to: {final_output_path}")
+        click.echo(f"> Transcription saved to: {final_output_path}")
 
     except Exception as e:
-        click.echo(f"�� Error in processing: {str(e)}", err=True)
+        click.echo(f"> Error in processing: {str(e)}", err=True)
         raise click.Abort()
 
 if __name__ == '__main__':

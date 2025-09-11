@@ -61,7 +61,7 @@ Transcript to clean:
         # Check if llm is available
         result = subprocess.run(['llm', '--version'], capture_output=True, text=True)
         if result.returncode != 0:
-            click.echo("⚠️  LLM package not found. Install with: pip install llm", err=True)
+            click.echo("> LLM package not found. Install with: pip install llm", err=True)
             return None
         
         # Run llm command
@@ -73,26 +73,26 @@ Transcript to clean:
             if cleaned_text:
                 return cleaned_text
             else:
-                click.echo("⚠️  LLM returned empty response", err=True)
+                click.echo("> LLM returned empty response", err=True)
                 return None
         else:
             error_msg = result.stderr.strip()
             if "No API key" in error_msg or "authentication" in error_msg.lower():
-                click.echo("⚠️  LLM API key not configured. Run: llm keys set gemini", err=True)
+                click.echo("> LLM API key not configured. Run: llm keys set gemini", err=True)
             elif "Model not found" in error_msg:
-                click.echo(f"⚠️  Model '{model}' not available. Try: gemini-1.5-pro or gpt-4o-mini", err=True)
+                click.echo(f"> Model '{model}' not available. Try: gemini-1.5-pro or gpt-4o-mini", err=True)
             else:
-                click.echo(f"⚠️  LLM error: {error_msg}", err=True)
+                click.echo(f"> LLM error: {error_msg}", err=True)
             return None
             
     except subprocess.TimeoutExpired:
-        click.echo("⚠️  LLM request timed out", err=True)
+        click.echo("> LLM request timed out", err=True)
         return None
     except FileNotFoundError:
-        click.echo("⚠️  LLM package not found. Install with: pip install llm", err=True)
+        click.echo("> LLM package not found. Install with: pip install llm", err=True)
         return None
     except Exception as e:
-        click.echo(f"⚠️  Unexpected error during cleaning: {str(e)}", err=True)
+        click.echo(f"> Unexpected error during cleaning: {str(e)}", err=True)
         return None
 
 def chunk_text(text: str, max_chunk_size: int = 20000) -> list[str]:
@@ -126,7 +126,7 @@ def clean_long_transcript(text: str, model: str = "gemini-2.0-flash-exp", style:
     if len(text) <= 20000:
         return clean_transcript(text, model, style)
     
-    click.echo("📝 Processing long transcript in chunks...")
+    click.echo("> Processing long transcript in chunks...")
     
     chunks = chunk_text(text)
     cleaned_chunks = []
