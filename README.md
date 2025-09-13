@@ -28,51 +28,16 @@ clean-transcribe "https://www.youtube.com/watch?v=VIDEO_ID" -f srt -o subtitles.
 
 ## Installation
 
-**Option 1: Clone and run**
+**Option 1: use pip:**
 ```bash
-git clone https://github.com/itsmevictor/clean-transcribe
-cd clean-transcribe
-pip install -r requirements.txt
-clean-transcribe "path/to/your/audio.mp3"
+pip install clean-transcribe
 ```
 
 **Option 2: Install as package**
 ```bash
-git clone https://github.com/itsmevictor/clean-transcribe
-cd clean-transcribe
+git clone https://github.com/itsmevictor/clean-transcribe && cd clean-transcribe 
 pip install -e .
 clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"   
-```
-
-## Usage Examples
-
-**Transcribe a YouTube video:**
-```bash
-clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-```
-
-**Transcribe a local audio file:**
-```bash
-clean-transcribe "path/to/your/audio.mp3" -o "transcript.txt"
-```
-
-**Transcribe a specific segment:**
-```bash
-clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --start "00:01:30" --end "00:02:30"
-```
-
-**Create clean subtitles from a video:**
-```bash
-clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ" -f srt
-```
-
-**High-quality lecture transcription from a local file:**
-```bash
-clean-transcribe "lecture.wav" \
-    -m whisper-large \
-    --llm-model gemini-2.0-flash-exp \
-    --cleaning-style lecture \
-    --save-raw
 ```
 
 ## Configuration

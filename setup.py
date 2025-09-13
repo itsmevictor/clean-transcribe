@@ -51,7 +51,7 @@ setup(
     ],
     keywords="youtube transcription whisper ai cleaning subtitles srt vtt",
     project_urls={
-        "Bug Reports": "https://github.com/itsmevictor/youtube-to-text/issues",
-        "Source": "https://github.com/itsmevictor/youtube-to-text",
+        "Bug Reports": "https://github.com/itsmevictor/clean-transcribe/issues",
+        "Source": "https://github.com/itsmevictor/clean-transcribe",
     },
 )
