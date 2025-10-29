@@ -6,7 +6,7 @@ A command-line tool to turn any YouTube video, local audio or video file into a 
 
 1. **Multiple input formats**: Supports various audio and video formats for flexible usage (e.g., YouTube URL, `.mp3`, `.wav`, `.m4a`, `.opus`, `.mp4`, `.mkv`, `.mov`).
 2. **Multiple output format**: Generate clean transcripts in TXT, SRT, or VTT formats.
-3. **Flexible transcription models**: Choose from various local (Whisper, Voxtral) and API-based (OpenAI, Mistral) models for different use cases.
+3. **Flexible transcription models**: Choose from various local (Whisper, Voxtral) and API-based (OpenAI, Gemini, Mistral) models for different use cases.
 5. **LLM-powered cleaning** that removes filler words, fixes grammar, and organizes content into readable paragraphs.   
 6. **Wide LLM support** - use Gemini, ChatGPT, Claude or any other (local) LLM for cleaning.
 
@@ -44,7 +44,7 @@ clean-transcribe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 ### Key Options
 - `--format, -f`: Output format (txt, srt, vtt)
-- `--model, -m`: Transcription model (whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo, whisper-1-api, gpt-4o-transcribe-api, gpt-4o-mini-transcribe-api, voxtral-mini-api, voxtral-small-api, voxtral-mini-local, voxtral-small-local)
+- `--model, -m`: Transcription model (whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo, whisper-1-api, gpt-4o-transcribe-api, gpt-4o-mini-transcribe-api, gemini-2.5-pro-api, gemini-2.5-flash-api, gemini-2.5-flash-lite-api, gemini-2.0-flash-api, voxtral-mini-api, voxtral-small-api, voxtral-mini-local, voxtral-small-local)
 - `--start`: Start time for transcription (e.g., "1:30")
 - `--end`: End time for transcription (e.g., "2:30")
 - `--transcription-prompt`: Custom prompt for Whisper to guide transcription

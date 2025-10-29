@@ -23,23 +23,27 @@ def _map_model_name(model_name: str) -> str:
     }
     return model_mapping.get(model_name, model_name)
 
-def transcribe_audio(audio_path: str, model_name: str = 'whisper-base', language: Optional[str] = None, 
+def transcribe_audio(audio_path: str, model_name: str = 'whisper-base', language: Optional[str] = None,
                     transcription_prompt: Optional[str] = None, auto_download: bool = False) -> Dict[str, Any]:
     """
     Transcribe audio using the appropriate provider based on model name.
-    
+
     Supports:
     - Whisper models: whisper-tiny, whisper-base, whisper-small, whisper-medium, whisper-large, whisper-turbo
+    - OpenAI API models: whisper-1-api, gpt-4o-transcribe-api, gpt-4o-mini-transcribe-api
+    - Gemini API models: gemini-2.5-pro-api, gemini-2.5-flash-api, gemini-2.5-flash-lite-api, gemini-2.0-flash-api
     - Voxtral API models: voxtral-mini-api, voxtral-small-api
     - Voxtral Local models: voxtral-mini-local, voxtral-small-local
     """
-    
+
     # Map new model names to internal names
     internal_model_name = _map_model_name(model_name)
-    
+
     # Route to appropriate provider based on model name
     if is_openai_api_model(model_name):
         return transcribe_audio_openai_api(audio_path, model_name, language, transcription_prompt)
+    elif is_gemini_api_model(model_name):
+        return transcribe_audio_gemini_api(audio_path, model_name, language, transcription_prompt)
     elif is_voxtral_api_model(internal_model_name):
         return transcribe_audio_voxtral_api(audio_path, internal_model_name, language, transcription_prompt)
     elif is_voxtral_local_model(internal_model_name):
@@ -104,7 +108,16 @@ def is_voxtral_local_model(model_name: str) -> bool:
         return False
 
 
-def transcribe_audio_openai_api(audio_path: str, model_name: str, language: Optional[str], 
+def is_gemini_api_model(model_name: str) -> bool:
+    """Check if model should use Gemini API."""
+    try:
+        from .gemini_api import is_gemini_api_model
+        return is_gemini_api_model(model_name)
+    except ImportError:
+        return False
+
+
+def transcribe_audio_openai_api(audio_path: str, model_name: str, language: Optional[str],
                                transcription_prompt: Optional[str]) -> Dict[str, Any]:
     """Route to OpenAI API transcription."""
     try:
@@ -114,7 +127,17 @@ def transcribe_audio_openai_api(audio_path: str, model_name: str, language: Opti
         raise ImportError(f"OpenAI API support not available: {e}")
 
 
-def transcribe_audio_voxtral_api(audio_path: str, model_name: str, language: Optional[str], 
+def transcribe_audio_gemini_api(audio_path: str, model_name: str, language: Optional[str],
+                               transcription_prompt: Optional[str]) -> Dict[str, Any]:
+    """Route to Gemini API transcription."""
+    try:
+        from .gemini_api import transcribe_audio_gemini_api
+        return transcribe_audio_gemini_api(audio_path, model_name, language, transcription_prompt)
+    except ImportError as e:
+        raise ImportError(f"Gemini API support not available: {e}")
+
+
+def transcribe_audio_voxtral_api(audio_path: str, model_name: str, language: Optional[str],
                                transcription_prompt: Optional[str]) -> Dict[str, Any]:
     """Route to Voxtral API transcription."""
     try:
@@ -138,10 +161,28 @@ def get_available_models() -> Dict[str, list]:
     """Get all available models grouped by provider."""
     models = {
         'whisper': ['whisper-tiny', 'whisper-base', 'whisper-small', 'whisper-medium', 'whisper-large', 'whisper-turbo'],
+        'openai_api': [],
+        'gemini_api': [],
         'voxtral_api': [],
         'voxtral_local': []
     }
-    
+
+    # Check OpenAI API availability
+    try:
+        from .openai_api import check_openai_api_setup
+        if check_openai_api_setup():
+            models['openai_api'] = ['whisper-1-api', 'gpt-4o-transcribe-api', 'gpt-4o-mini-transcribe-api']
+    except ImportError:
+        pass
+
+    # Check Gemini API availability
+    try:
+        from .gemini_api import check_gemini_api_setup
+        if check_gemini_api_setup():
+            models['gemini_api'] = ['gemini-2.5-pro-api', 'gemini-2.5-flash-api', 'gemini-2.5-flash-lite-api', 'gemini-2.0-flash-api']
+    except ImportError:
+        pass
+
     # Check Voxtral API availability
     try:
         from .voxtral_api import check_voxtral_api_setup
@@ -149,7 +190,7 @@ def get_available_models() -> Dict[str, list]:
             models['voxtral_api'] = ['voxtral-mini-api', 'voxtral-small-api']
     except ImportError:
         pass
-    
+
     # Check local Voxtral availability
     try:
         from .voxtral_local import check_voxtral_local_setup
@@ -157,5 +198,5 @@ def get_available_models() -> Dict[str, list]:
             models['voxtral_local'] = ['voxtral-mini-local', 'voxtral-small-local']
     except ImportError:
         pass
-    
+
     return models

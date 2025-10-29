@@ -17,7 +17,7 @@ except FileNotFoundError:
 
 setup(
     name="clean-transcribe",
-    version="1.0.0",
+    version="1.1.0",
     description="A simple CLI to transcribe Youtube videos or local audio/video files and produce easy-to-use transcripts for analysis, reading, or subtitles.",
     long_description=long_description,
     long_description_content_type="text/markdown",
