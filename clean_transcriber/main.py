@@ -10,6 +10,7 @@ from .transcriber import transcribe_audio
 from .formatter import format_output
 from .cleaner import clean_long_transcript
 from .trimmer import trim_audio
+from .version_checker import check_for_updates
 
 @click.command()
 @click.argument('input_path', metavar='<URL or local path>')
@@ -71,6 +72,9 @@ def transcribe(input_path, output, output_format, model, language, keep_audio, c
       • Voxtral API: voxtral-mini-api, voxtral-small-api (requires MISTRAL_API_KEY)
       • Voxtral Local: voxtral-mini-local, voxtral-small-local (requires transformers)
     """
+    # Check for package updates
+    check_for_updates()
+
     try:
         is_local_file = os.path.exists(input_path)
         
