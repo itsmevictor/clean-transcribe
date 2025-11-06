@@ -5,6 +5,8 @@ import click
 from packaging import version
 import os
 import re
+import time
+from pathlib import Path
 
 
 def get_current_version():
@@ -25,6 +27,80 @@ def get_current_version():
 
     # Fallback version
     return "1.1.0"
+
+
+def get_cache_dir():
+    """Get the cache directory for storing version check data."""
+    # Try XDG cache directory first (Linux/Mac standard)
+    xdg_cache = os.environ.get('XDG_CACHE_HOME')
+    if xdg_cache:
+        cache_dir = Path(xdg_cache) / 'clean-transcribe'
+    else:
+        # Fallback to ~/.cache/clean-transcribe
+        cache_dir = Path.home() / '.cache' / 'clean-transcribe'
+
+    # Create directory if it doesn't exist
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        return cache_dir
+    except Exception:
+        # If we can't create the cache directory, return None
+        return None
+
+
+def get_cache_file_path():
+    """Get the path to the version check cache file."""
+    cache_dir = get_cache_dir()
+    if cache_dir:
+        return cache_dir / 'version_check.json'
+    return None
+
+
+def read_cache(cache_file, check_interval_hours=24):
+    """
+    Read the cache file and check if it's still valid.
+
+    Args:
+        cache_file: Path to the cache file
+        check_interval_hours: How many hours the cache is valid for
+
+    Returns:
+        Cached data dict if valid, None otherwise
+    """
+    try:
+        if cache_file and cache_file.exists():
+            with open(cache_file, 'r') as f:
+                data = json.load(f)
+                last_check = data.get('last_check', 0)
+                current_time = time.time()
+
+                # Check if cache is still valid
+                if current_time - last_check < (check_interval_hours * 3600):
+                    return data
+    except Exception:
+        pass
+    return None
+
+
+def write_cache(cache_file, latest_version):
+    """
+    Write the cache file with the latest check data.
+
+    Args:
+        cache_file: Path to the cache file
+        latest_version: The latest version from PyPI
+    """
+    try:
+        if cache_file:
+            data = {
+                'last_check': time.time(),
+                'latest_version': latest_version
+            }
+            with open(cache_file, 'w') as f:
+                json.dump(data, f)
+    except Exception:
+        # Silently fail if we can't write the cache
+        pass
 
 
 def get_latest_pypi_version(package_name="clean-transcribe", timeout=2):
@@ -48,15 +124,34 @@ def get_latest_pypi_version(package_name="clean-transcribe", timeout=2):
         return None
 
 
-def check_for_updates():
+def check_for_updates(check_interval_hours=24):
     """
     Check if a newer version is available on PyPI and display a message.
+    Uses a cache to avoid checking too frequently (default: once per 24 hours).
     This function is designed to fail gracefully and not interrupt the user experience.
+
+    Args:
+        check_interval_hours: How many hours to wait between checks (default: 24)
     """
     try:
         current = get_current_version()
-        latest = get_latest_pypi_version()
+        cache_file = get_cache_file_path()
 
+        # Try to read from cache first
+        cached_data = read_cache(cache_file, check_interval_hours)
+
+        if cached_data:
+            # Use cached version data
+            latest = cached_data.get('latest_version')
+        else:
+            # Cache expired or doesn't exist, check PyPI
+            latest = get_latest_pypi_version()
+
+            # Update cache with the new data
+            if latest:
+                write_cache(cache_file, latest)
+
+        # Display notification if a newer version is available
         if latest and version.parse(latest) > version.parse(current):
             click.secho(
                 f"\n  A new version of clean-transcribe is available: {latest} (you have {current})",
