@@ -3,7 +3,7 @@ import sys
 import click
 from typing import Optional
 
-def clean_transcript(text: str, model: str = "gemini-2.0-flash-exp", style: str = "presentation") -> Optional[str]:
+def clean_transcript(text: str, model: str = "gemini/gemini-2.5-flash-lite", style: str = "presentation") -> Optional[str]:
     """Clean transcript using LLM via the llm package."""
     
     # Choose cleaning prompt based on style
@@ -119,7 +119,7 @@ def chunk_text(text: str, max_chunk_size: int = 20000) -> list[str]:
     
     return chunks
 
-def clean_long_transcript(text: str, model: str = "gemini-2.0-flash-exp", style: str = "presentation") -> Optional[str]:
+def clean_long_transcript(text: str, model: str = "gemini/gemini-2.5-flash-lite", style: str = "presentation") -> Optional[str]:
     """Clean very long transcripts by processing in chunks."""
     
     # Check if text needs chunking

@@ -47,7 +47,7 @@ from .trimmer import trim_audio
 # LLM Cleaning Options
 @optgroup.group('LLM Cleaning Options')
 @optgroup.option('--clean/--no-clean', 'clean_transcript', default=True, help='Clean transcript using LLM (default: clean)')
-@optgroup.option('--llm-model', default='gemini-2.0-flash-exp', help='LLM model for cleaning (default: gemini-2.0-flash-exp). Run `llm models` for a list of supported models, and see https://github.com/simonw/llm for details.')
+@optgroup.option('--llm-model', default='gemini/gemini-2.5-flash-lite', help='LLM model for cleaning (default: gemini/gemini-2.5-flash-lite). Run `llm models` for a list of supported models, and see https://github.com/simonw/llm for details.')
 @optgroup.option('--cleaning-style', type=click.Choice(['presentation', 'conversation', 'lecture']), 
               default='presentation', help='Style of cleaning to apply (default: presentation)')
 
